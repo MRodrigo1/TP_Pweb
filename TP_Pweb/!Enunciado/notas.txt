@@ -1,0 +1,15 @@
+﻿	Área de acesso livre - utilizadores não autenticados;
+	Área de clientes - utilizadores registados com perfil cliente;
+	Área de funcionário - utilizadores registados com perfil funcionário e associados a uma
+empresa;
+	Área de gestor de uma empresa de aluguer - utilizadores registados com perfil gestor e
+associados a uma empresa;
+	Área de administrador da plataforma; 
+	
+	//Extra
+	Dashboard com dados relativos ao negócio:
+● Valor de facturação nos últimos 7 dias
+● Valor de facturação nos últimos 30 dias
+● N.º médio de reservas diárias nos últimos 30 dias.
+● Gráfico com o número de reservas por dia (30 dias).
+
