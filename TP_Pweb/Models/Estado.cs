@@ -1,12 +1,18 @@
 ﻿namespace TP_Pweb.Models
 {
+  
     public class Estado
     {
-        
-//N.º de Quilómetros do veículo
-//Danos no veículo(S/N)
-//Observações
-//Funcionário que efetuou a entrega
+        public int Id { get; set; }
+        public int NrKilometros { get; set; }
+        public Boolean danos { get; set; }
+        public byte[]? ProvaDanos { get; set; } //TODO mudar byte
+        public string observacoes { get; set; }
+
+        //Relações
+        public int UtilizadorId { get; set; }
+        public Utilizador Funcionario { get; set; }
+
 
     }
 }

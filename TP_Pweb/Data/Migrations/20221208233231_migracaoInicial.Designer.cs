@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TP_Pweb.Data;
 
@@ -11,9 +12,10 @@ using TP_Pweb.Data;
 namespace TP_Pweb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221208233231_migracaoInicial")]
+    partial class migracaoInicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,10 +88,6 @@ namespace TP_Pweb.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -141,8 +139,6 @@ namespace TP_Pweb.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -275,22 +271,7 @@ namespace TP_Pweb.Data.Migrations
                     b.Property<bool>("Concluida")
                         .HasColumnType("bit");
 
-                    b.Property<string>("UtilizadorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("VeiculoId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VeiculoId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UtilizadorId");
-
-                    b.HasIndex("VeiculoId1");
 
                     b.ToTable("reservas");
                 });
@@ -326,30 +307,6 @@ namespace TP_Pweb.Data.Migrations
                     b.HasIndex("EmpresaId");
 
                     b.ToTable("veiculos");
-                });
-
-            modelBuilder.Entity("TP_Pweb.Models.Utilizador", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<byte[]>("Avatar")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<DateTime>("DataNascimento")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("NIF")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PrimeiroNome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UltimoNome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Utilizador");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -403,25 +360,6 @@ namespace TP_Pweb.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TP_Pweb.Models.Reserva", b =>
-                {
-                    b.HasOne("TP_Pweb.Models.Utilizador", "Utilizador")
-                        .WithMany("reservas")
-                        .HasForeignKey("UtilizadorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TP_Pweb.Models.Veiculo", "Veiculo")
-                        .WithMany()
-                        .HasForeignKey("VeiculoId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Utilizador");
-
-                    b.Navigation("Veiculo");
-                });
-
             modelBuilder.Entity("TP_Pweb.Models.Veiculo", b =>
                 {
                     b.HasOne("TP_Pweb.Models.Categoria", "categoria")
@@ -445,11 +383,6 @@ namespace TP_Pweb.Data.Migrations
             modelBuilder.Entity("TP_Pweb.Models.Empresa", b =>
                 {
                     b.Navigation("Veiculos");
-                });
-
-            modelBuilder.Entity("TP_Pweb.Models.Utilizador", b =>
-                {
-                    b.Navigation("reservas");
                 });
 #pragma warning restore 612, 618
         }
