@@ -8,10 +8,9 @@
         public int nrKm { get; set; }
         //public Estado estado { get; set; }
         //Relações
-        //Precisa id?
         public int? EmpresaId { get; set; }
-        public Empresa empresa { get; set; }
+        public Empresa? empresa { get; set; }
         public int? CategoriaId { get; set; }
-        public Categoria categoria { get; set; }
+        public Categoria? categoria { get; set; }
     }
 }

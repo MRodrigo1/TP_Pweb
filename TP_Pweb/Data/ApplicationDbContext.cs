@@ -13,5 +13,6 @@ namespace TP_Pweb.Data
             : base(options)
         {
         }
+        public DbSet<TP_Pweb.Models.Empresa> Empresa { get; set; }
     }
 }

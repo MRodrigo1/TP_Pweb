@@ -23,10 +23,23 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Veiculos" asp-action="Index">Veiculos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Empresas" asp-action="Index">Empresas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Categorias</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservas" asp-action="Index">Reservas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Utilizadores" asp-action="Index">Utilizadores</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
+
                 </div>
             </div>
         </nav>
@@ -34,12 +47,14 @@
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
+            <partial name="~/Views/Veiculos/_QuickSearchVeiculos.cshtml"/>
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2022 - TP_Pweb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+           
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
