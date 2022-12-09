@@ -8,6 +8,7 @@ namespace TP_Pweb.Models
         public string UltimoNome { get; set; }
         public DateTime DataNascimento { get; set; }
         public int NIF { get; set; }
+        public Boolean ativo { get; set; }
         public ICollection<Reserva> reservas { get; set; }
 
     }

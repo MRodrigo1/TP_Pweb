@@ -22,7 +22,6 @@ namespace PWEB_AulasP_2223.Data
             await roleManager.CreateAsync(new IdentityRole(Roles.Gestor.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Administrador.ToString()));
             //Adicionar Default User - Utilizador Anónimo
-
         }
     }
 }
