@@ -4,7 +4,7 @@ using TP_Pweb.Models;
 
 namespace TP_Pweb.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<Utilizador>
     {
         public DbSet<Veiculo> veiculos { get; set; }
         public DbSet<Categoria> categorias { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TP_Pweb.Data;
 
@@ -11,9 +12,10 @@ using TP_Pweb.Data;
 namespace TP_Pweb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221209001450_ReservaFix")]
+    partial class ReservaFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -249,6 +251,9 @@ namespace TP_Pweb.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("VeiculoId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EstadoEntregaId");
@@ -256,6 +261,8 @@ namespace TP_Pweb.Data.Migrations
                     b.HasIndex("EstadoRecolhaId");
 
                     b.HasIndex("UtilizadorId");
+
+                    b.HasIndex("VeiculoId");
 
                     b.ToTable("reservas");
                 });
@@ -453,11 +460,19 @@ namespace TP_Pweb.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TP_Pweb.Models.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("EstadoEntrega");
 
                     b.Navigation("EstadoRecolha");
 
                     b.Navigation("Utilizador");
+
+                    b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("TP_Pweb.Models.Veiculo", b =>
