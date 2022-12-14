@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TP_Pweb.Data;
 using TP_Pweb.Models;
+using TP_Pweb.ViewModels;
 
 namespace TP_Pweb.Controllers
 {
@@ -62,7 +63,8 @@ namespace TP_Pweb.Controllers
         public async Task<IActionResult> Create([Bind("Id,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
         {
             //veiculo.empresa = _context.Empresa.Where(empresaid =>Empresa)
-
+            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
             if (ModelState.IsValid)
             {
                 _context.Add(veiculo);
@@ -85,8 +87,8 @@ namespace TP_Pweb.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Id", veiculo.CategoriaId);
-            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Id", veiculo.EmpresaId);
+            //ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Id", veiculo.CategoriaId);
+            //ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Id", veiculo.EmpresaId);
             return View(veiculo);
         }
 
@@ -122,8 +124,8 @@ namespace TP_Pweb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Id", veiculo.CategoriaId);
-            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Id", veiculo.EmpresaId);
+            //ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Id", veiculo.CategoriaId);
+            //ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Id", veiculo.EmpresaId);
             return View(veiculo);
         }
 
@@ -169,6 +171,56 @@ namespace TP_Pweb.Controllers
         private bool VeiculoExists(int id)
         {
           return _context.veiculos.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> Search(string LocalizacaoPesquisa)
+        {
+            PesquisaVeiculoViewModel pesquisaVeiculo = new PesquisaVeiculoViewModel();
+            if (string.IsNullOrEmpty(LocalizacaoPesquisa))
+            {
+                pesquisaVeiculo.ListaDeVeiculos =
+                    await _context.veiculos.ToListAsync();
+
+                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+            }
+            else
+            {
+                pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Where(
+                        v => v.Localizacao.Contains(LocalizacaoPesquisa)
+                        ).ToListAsync();
+                pesquisaVeiculo.LocalizacaoPesquisa = LocalizacaoPesquisa;
+
+            }
+            pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+            return View(pesquisaVeiculo);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo) {
+            //ViewData["CategoriaNome"] = new SelectList(_context.categorias, "Id", "Nome");
+            //ViewData["EmpresaNome"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
+
+            if (string.IsNullOrEmpty(pesquisaVeiculo.LocalizacaoPesquisa))
+            {
+                pesquisaVeiculo.ListaDeVeiculos =
+                    await _context.veiculos.ToListAsync();
+
+                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+            }
+            else
+            {
+                pesquisaVeiculo.ListaDeVeiculos =
+                    await _context.veiculos.Include(v => v.Localizacao).Where(
+                        v => v.Localizacao.Contains(pesquisaVeiculo.LocalizacaoPesquisa)
+                        ).ToListAsync();
+
+                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+
+            }
+
+            return View(pesquisaVeiculo);
         }
     }
 }
