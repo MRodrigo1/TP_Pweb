@@ -54,7 +54,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome")] Empresa empresa)
+        public async Task<IActionResult> Create([Bind("Id,Nome,avaliacao")] Empresa empresa)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Empresa empresa)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,avaliacao")] Empresa empresa)
         {
             if (id != empresa.Id)
             {

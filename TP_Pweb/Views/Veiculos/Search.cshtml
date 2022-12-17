@@ -24,19 +24,19 @@
     {
         <div class="col">
             <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    
+                <div class="card-header py-3"  >
                         <h4 class="my-0 fw-normal">
-                            @Html.DisplayFor(model=>v.custo)
-                            (
-                            @Html.DisplayFor(model=>v.Localizacao)
-                            )
-                            @Html.DisplayFor(model=>v.empresa.Id)
-
+                            @Html.DisplayFor(model=>v.Modelo)
+                            <small class="text-muted fw-light">Localização:</small>@Html.DisplayFor(model=>v.Localizacao)
                         </h4>
-                    
-
-                </div>
+                        </div>
+                         <div class="card-body">
+                            <h1 class="card-title pricing-card-title">€ @v.custo<small class="text-muted fw-light"></small></h1>
+                            </div>
+                         <h4 class="my-0 fw-normal">
+                            <small class="text-muted fw-light">Empresa:</small>@Html.DisplayFor(model=>v.empresa.Nome)
+                            <small class="text-muted fw-light">Avaliação:</small>@Html.DisplayFor(model=>v.empresa.avaliacao)/5
+                        </h4>
 
                     <a asp-controller="Veiculos" asp-action="Details" asp-route-id="@v.Id" 
                     class="w-100 btn btn-lg btn-outline-primary">Saber mais</a>

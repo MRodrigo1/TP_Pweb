@@ -60,7 +60,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
+        public async Task<IActionResult> Create([Bind("Id,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
         {
             //veiculo.empresa = _context.Empresa.Where(empresaid =>Empresa)
             ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
@@ -97,7 +97,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
         {
             if (id != veiculo.Id)
             {
@@ -173,24 +173,34 @@ namespace TP_Pweb.Controllers
           return _context.veiculos.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Search(string LocalizacaoPesquisa)
+        public async Task<IActionResult> Search(string LocalizacaoPesquisa,string CategoriaPesquisa, DateTime DataInicialPesquisa, DateTime DataFinalPesquisa)
         {
             PesquisaVeiculoViewModel pesquisaVeiculo = new PesquisaVeiculoViewModel();
-            if (string.IsNullOrEmpty(LocalizacaoPesquisa))
-            {
-                pesquisaVeiculo.ListaDeVeiculos =
-                    await _context.veiculos.ToListAsync();
-
-                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
-            }
-            else
-            {
-                pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Where(
-                        v => v.Localizacao.Contains(LocalizacaoPesquisa)
+            
+                pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Include("empresa").Include("categoria").Where(
+                        v => v.Localizacao.Contains(LocalizacaoPesquisa) &&
+                        v.categoria.Nome.Equals(CategoriaPesquisa)
                         ).ToListAsync();
                 pesquisaVeiculo.LocalizacaoPesquisa = LocalizacaoPesquisa;
-
+                pesquisaVeiculo.CategoriaPesquisa = CategoriaPesquisa;
+            //Verificar data nas reservas
+            var reservas = _context.reservas.ToList();
+            foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos) {
+                foreach (Reserva r in reservas) {
+                    if (v.Id == r.VeiculoId)
+                    {
+                        if (DataInicialPesquisa < r.EstadoEntrega.dataReserva && DataFinalPesquisa < r.EstadoEntrega.dataReserva)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                        else if (DataInicialPesquisa > r.EstadoRecolha.dataReserva && DataFinalPesquisa > r.EstadoRecolha.dataReserva)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                    }
+                    }
             }
+            
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
             return View(pesquisaVeiculo);
 
@@ -198,27 +208,37 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo) {
-            //ViewData["CategoriaNome"] = new SelectList(_context.categorias, "Id", "Nome");
-            //ViewData["EmpresaNome"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
+        public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa,CategoriaPesquisa,DataInicialPesquisa,DataFinalPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo) {
 
-            if (string.IsNullOrEmpty(pesquisaVeiculo.LocalizacaoPesquisa))
+            pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Include("empresa").Include("categoria").Where(
+                    v => v.Localizacao.Contains(pesquisaVeiculo.LocalizacaoPesquisa) &&
+                    v.categoria.Equals(pesquisaVeiculo.CategoriaPesquisa)
+                    ).ToListAsync();
+
+            pesquisaVeiculo.LocalizacaoPesquisa = pesquisaVeiculo.LocalizacaoPesquisa;
+            pesquisaVeiculo.CategoriaPesquisa = pesquisaVeiculo.CategoriaPesquisa;
+            //Verificar data nas reservas
+            var reservas = _context.reservas.ToList();
+            foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos)
             {
-                pesquisaVeiculo.ListaDeVeiculos =
-                    await _context.veiculos.ToListAsync();
-
-                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+                foreach (Reserva r in reservas)
+                {
+                    if (v.Id == r.VeiculoId)
+                    {
+                        if (pesquisaVeiculo.DataInicialPesquisa < r.EstadoEntrega.dataReserva && pesquisaVeiculo.DataFinalPesquisa < r.EstadoEntrega.dataReserva)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                        else if (pesquisaVeiculo.DataInicialPesquisa > r.EstadoRecolha.dataReserva && pesquisaVeiculo.DataFinalPesquisa > r.EstadoRecolha.dataReserva)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                    }
+                }
             }
-            else
-            {
-                pesquisaVeiculo.ListaDeVeiculos =
-                    await _context.veiculos.Include(v => v.Localizacao).Where(
-                        v => v.Localizacao.Contains(pesquisaVeiculo.LocalizacaoPesquisa)
-                        ).ToListAsync();
 
-                pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
+            pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
 
-            }
 
             return View(pesquisaVeiculo);
         }

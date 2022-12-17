@@ -18,6 +18,11 @@
                 <span asp-validation-for="Nome" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="avaliacao" class="control-label"></label>
+                <input asp-for="avaliacao" class="form-control" />
+                <span asp-validation-for="avaliacao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

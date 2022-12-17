@@ -10,5 +10,11 @@ namespace TP_Pweb.ViewModels
 
         //[Display(Name = "PESQUISA DE CURSOS ...", Prompt = "introduza o texto a pesquisar")]
         public string LocalizacaoPesquisa { get; set; }
+
+        public string CategoriaPesquisa { get; set; }
+
+        public DateTime DataInicialPesquisa { get; set; }
+
+        public DateTime DataFinalPesquisa { get; set; }
     }
     }
