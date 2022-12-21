@@ -10,7 +10,13 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div>
+					<label asp-for="FotoDisplay">Escolha uma imagem de perfil:</label>
+					<input type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+						   asp-for="FotoDisplay" class="form-control" /> @*TODO ONCHANGE*@
+					<span asp-validation-for="FotoDisplay" class="text-danger"></span>
+				</div>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -60,13 +61,30 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
+        public async Task<IActionResult> Create([Bind("Id,FotoDisplay,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo,IFormFile FotoVeiculo)
         {
             //veiculo.empresa = _context.Empresa.Where(empresaid =>Empresa)
-            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            //ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            ViewBag.CategoriaId = new SelectList(_context.categorias, "Id", "Nome");
             ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
-            if (ModelState.IsValid)
-            {
+            //TODO Remove empresa e categoria, verificação
+            ModelState.Remove(nameof(veiculo.empresa));
+            ModelState.Remove(nameof(veiculo.categoria));
+
+                if (ModelState.IsValid)
+                {
+                if (FotoVeiculo != null)
+                {
+                    if (FotoVeiculo.Length <= (200 * 1024) && isValidFileType(FotoVeiculo.FileName))
+                    {
+                        using (var dataStream = new MemoryStream())
+                        {
+                            await FotoVeiculo.CopyToAsync(dataStream);
+                            veiculo.FotoDisplay = dataStream.ToArray();
+                        }
+                    }else
+                        return RedirectToAction();//TODO VERIFICAR O TAMANHO DA IMAGEM
+                }
                 _context.Add(veiculo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -198,7 +216,7 @@ namespace TP_Pweb.Controllers
                             pesquisaVeiculo.ListaDeVeiculos.Remove(v);
                         }
                     }
-                    }
+                }
             }
             
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
@@ -242,5 +260,15 @@ namespace TP_Pweb.Controllers
 
             return View(pesquisaVeiculo);
         }
+            bool isValidFileType(string fileName)
+            {
+                if (fileName.EndsWith(".png") || fileName.EndsWith(".jpg") || fileName.EndsWith(".jpeg"))
+                {
+                    return true;
+                }
+                else
+                    return false;
+            }   
+
     }
 }

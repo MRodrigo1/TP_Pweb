@@ -9,9 +9,9 @@
         public Estado EstadoEntrega { get; set; }
         public int? EstadoRecolhaId { get; set; }
         public Estado EstadoRecolha { get; set; }
-        public string UtilizadorId { get; set; }
+        public string? UtilizadorId { get; set; }
         public Utilizador Utilizador { get; set; }
-        public int VeiculoId { get; set; }
+        public int? VeiculoId { get; set; }
         public Veiculo Veiculo { get; set; }
     }
 }

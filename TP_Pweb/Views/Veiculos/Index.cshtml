@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.FotoDisplay)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Localizacao)
             </th>
             <th>
@@ -33,6 +36,23 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                 <div>
+					@if (item.FotoDisplay != null)
+					{
+						<img id="FotoDisplay"class="img-thumbnail"
+						 style="max-width:50px ; max-height:50px"
+						 src="data:image/*;base64,@(Convert.ToBase64String(item.FotoDisplay))">
+					}
+					else
+					{
+						<img id="FotoDisplay"
+						 class="img-thumbnail"
+						 style="max-width:50px ; max-height:50px"
+						 src="~/img/defaultcar.jpg">
+					}
+				</div>
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Localizacao)
             </td>
