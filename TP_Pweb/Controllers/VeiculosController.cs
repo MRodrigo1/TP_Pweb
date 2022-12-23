@@ -53,6 +53,8 @@ namespace TP_Pweb.Controllers
         {
             ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
             ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
+
+
             return View();
         }
 
@@ -70,9 +72,15 @@ namespace TP_Pweb.Controllers
             //TODO Remove empresa e categoria, verificação
             ModelState.Remove(nameof(veiculo.empresa));
             ModelState.Remove(nameof(veiculo.categoria));
+            if(FotoVeiculo == null)
+                ModelState.Remove(nameof(FotoVeiculo));
 
-                if (ModelState.IsValid)
+            if (ModelState.IsValid)
                 {
+                if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" + "/VeiculosPhotos/" + veiculo.Id)))
+                {
+                    Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" + "/VeiculosPhotos/" + veiculo.Id));
+                }
                 if (FotoVeiculo != null)
                 {
                     if (FotoVeiculo.Length <= (200 * 1024) && isValidFileType(FotoVeiculo.FileName))
@@ -95,10 +103,29 @@ namespace TP_Pweb.Controllers
         // GET: Veiculos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
+
             if (id == null || _context.veiculos == null)
             {
                 return NotFound();
             }
+
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/VeiculosPhotos");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string VeiculoPath = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\VeiculosPhotos\\" + id.ToString());
+
+            if (!Directory.Exists(VeiculoPath))
+                Directory.CreateDirectory(VeiculoPath);
+
+            var files = from file in Directory.EnumerateFiles(VeiculoPath)
+                        select string.Format("/VeiculosPhotos/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheiros"] = files;
+            ViewBag.ficheiros = files;
 
             var veiculo = await _context.veiculos.FindAsync(id);
             if (veiculo == null)
@@ -115,17 +142,71 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo, IFormFile FotoVeiculo, [FromForm] List<IFormFile> fotosVeiculos)
         {
+            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
             if (id != veiculo.Id)
             {
                 return NotFound();
             }
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/VeiculosPhotos");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string VeiculoPath = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\VeiculosPhotos\\" + id.ToString());
+
+            if (!Directory.Exists(VeiculoPath))
+                Directory.CreateDirectory(VeiculoPath);
+
+            var files = from file in Directory.EnumerateFiles(VeiculoPath)
+                        select string.Format("/VeiculosPhotos/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheiros"] = files;
+
+            if (FotoVeiculo == null) {
+                ModelState.Remove(nameof(FotoVeiculo));//TODO VERIFICAR O TAMANHO DA IMAGEM
+            }
+
+            ModelState.Remove(nameof(veiculo.empresa));
+            ModelState.Remove(nameof(veiculo.categoria));
 
             if (ModelState.IsValid)
             {
+                
+                if (FotoVeiculo != null)
+                {
+                    if (FotoVeiculo.Length <= (200 * 1024) && isValidFileType(FotoVeiculo.FileName))
+                    {
+                        using (var dataStream = new MemoryStream())
+                        {
+                            await FotoVeiculo.CopyToAsync(dataStream);
+                            veiculo.FotoDisplay = dataStream.ToArray();
+                        }
+                    }
+                    else
+                        return RedirectToAction();//TODO VERIFICAR O TAMANHO DA IMAGEM
+                }
                 try
                 {
+                    foreach (var formFile in fotosVeiculos)
+                    {
+                        if (formFile.Length > 0)
+                        {
+                            var filePath = Path.Combine(VeiculoPath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+
+                            while (System.IO.File.Exists(filePath))
+                            {
+                                filePath = Path.Combine(VeiculoPath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+                            }
+
+                            using (var stream = System.IO.File.Create(filePath))
+                            {
+                                await formFile.CopyToAsync(stream);
+                            }
+                        }
+                    }
                     _context.Update(veiculo);
                     await _context.SaveChangesAsync();
                 }
@@ -268,7 +349,22 @@ namespace TP_Pweb.Controllers
                 }
                 else
                     return false;
-            }   
+            }
+
+        public async Task<IActionResult> deleteImage(int id, string image)
+        {
+            if (id == null || _context.veiculos == null)
+                return NotFound();
+            var veiculo = await _context.veiculos.FirstOrDefaultAsync(v => v.Id == id);
+
+            if (veiculo == null)
+                return NotFound();
+
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/" + image);
+
+            System.IO.File.Delete(filePath);
+            return RedirectToAction("Edit", new { Id = id });
+        }
 
     }
 }

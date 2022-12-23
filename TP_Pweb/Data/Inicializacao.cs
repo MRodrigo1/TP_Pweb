@@ -22,6 +22,22 @@ namespace PWEB_AulasP_2223.Data
             await roleManager.CreateAsync(new IdentityRole(Roles.Gestor.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Administrador.ToString()));
             //Adicionar Default User - Utilizador Anónimo
+            var defaultUser = new Utilizador
+            {
+                UserName = "admin@localhost.com",
+                Email = "admin@localhost.com",
+                PrimeiroNome = "Administrador",
+                UltimoNome = "Local",
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true
+            };
+            var user = await userManager.FindByEmailAsync(defaultUser.Email);
+            if (user == null)
+            {
+                await userManager.CreateAsync(defaultUser, "Is3C..00");
+                await userManager.AddToRoleAsync(defaultUser,
+                Roles.Administrador.ToString());
+            }
         }
     }
 }
