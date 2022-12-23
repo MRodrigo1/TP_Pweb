@@ -48,6 +48,24 @@ namespace TP_Pweb.Controllers
             return View(veiculo);
         }
 
+        public async Task<IActionResult> RealizaReserva(int? id) {
+            if (id == null || _context.veiculos == null)
+            {
+                return NotFound();
+            }
+
+            var veiculo = await _context.veiculos
+                .Include(v => v.categoria)
+                .Include(v => v.empresa)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (veiculo == null)
+            {
+                return NotFound();
+            }
+
+            return View(veiculo);
+        }
+
         // GET: Veiculos/Create
         public IActionResult Create()
         {
@@ -183,10 +201,13 @@ namespace TP_Pweb.Controllers
                         {
                             await FotoVeiculo.CopyToAsync(dataStream);
                             veiculo.FotoDisplay = dataStream.ToArray();
+
                         }
                     }
                     else
-                        return RedirectToAction();//TODO VERIFICAR O TAMANHO DA IMAGEM
+                    {
+                        return RedirectToAction(); //TODO VERIFICAR O TAMANHO DA IMAGEM
+                    }
                 }
                 try
                 {
@@ -365,6 +386,8 @@ namespace TP_Pweb.Controllers
             System.IO.File.Delete(filePath);
             return RedirectToAction("Edit", new { Id = id });
         }
+
+
 
     }
 }

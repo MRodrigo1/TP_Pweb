@@ -51,10 +51,8 @@ namespace TP_Pweb.Controllers
         // GET: Reservas/Create
         public IActionResult Create()
         {
-            ViewData["EstadoEntregaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id");
-            ViewData["EstadoRecolhaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id");
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Id");
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "PrimeiroNome");
+            ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Modelo");
             return View();
         }
 
@@ -71,10 +69,8 @@ namespace TP_Pweb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstadoEntregaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoEntregaId);
-            ViewData["EstadoRecolhaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoRecolhaId);
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", reserva.UtilizadorId);
-            ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Id", reserva.VeiculoId);
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "PrimeiroNome", reserva.UtilizadorId);
+            ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "PrimeiroNome", reserva.VeiculoId);
             return View(reserva);
         }
 
