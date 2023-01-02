@@ -86,17 +86,19 @@ namespace TP_Pweb.Controllers
         public async Task<IActionResult> CreateFromDetails([Bind("Id,Concluida,EstadoEntregaId,DataRecolha,DataEntrega,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
-            //TODO IDVEICULO
             
-            var user = await _userManager.GetUserAsync(User);
-            reserva.VeiculoId = idcar;
-            reserva.UtilizadorId = user.Id;
-            reserva.Concluida = false;
+
             ModelState.Remove(nameof(reserva.EstadoRecolha));
             ModelState.Remove(nameof(reserva.EstadoEntrega));
             ModelState.Remove(nameof(reserva.Veiculo));
             ModelState.Remove(nameof(reserva.Utilizador));
-            ModelState.Remove(nameof(reserva.Utilizador));
+            ModelState.Remove(nameof(reserva.UtilizadorId));
+            var user = await _userManager.GetUserAsync(User);
+            reserva.VeiculoId = idcar;
+            reserva.UtilizadorId = user.Id;
+            reserva.Concluida = false;
+           
+
 
             // verifica se a data é válida
             //TODO Melhorar função IsValidDate(reserva)
@@ -104,7 +106,7 @@ namespace TP_Pweb.Controllers
             if (ModelState.IsValid) {
                 _context.Add(reserva);
                 await _context.SaveChangesAsync();
-                return View(reserva);
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
