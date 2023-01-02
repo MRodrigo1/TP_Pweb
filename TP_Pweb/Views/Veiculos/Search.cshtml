@@ -10,6 +10,9 @@
 {
     <p>Resultado da pesquisa por "@Model.LocalizacaoPesquisa":</p>
 
+    <label name="DataInicialPesquisa">Disponivel de @Html.DisplayFor(model=>Model.DataInicialPesquisa)</label>
+    <label name="DataFinalPesquisa"> a @Html.DisplayFor(model=>Model.DataFinalPesquisa)</label>
+
     @if (Model.NumResultados == 0)
     {
         <p class="alert alert-warning">
@@ -50,8 +53,8 @@
                             <small class="text-muted fw-light">Avaliação:</small>@Html.DisplayFor(model=>v.empresa.avaliacao)/5
                         </h4>
 
-                    <a asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" 
-                    class="w-100 btn btn-lg btn-outline-primary">Saber mais</a>
+                    <a asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" class="w-100 btn btn-lg btn-outline-primary">Consultar</a>
+
                 </div>
             </div>
     }

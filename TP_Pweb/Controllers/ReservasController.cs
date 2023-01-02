@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,11 @@ namespace TP_Pweb.Controllers
     public class ReservasController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public ReservasController(ApplicationDbContext context)
+        private readonly UserManager<Utilizador> _userManager;
+        public ReservasController(ApplicationDbContext context, UserManager<Utilizador> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Reservas
@@ -73,6 +76,56 @@ namespace TP_Pweb.Controllers
             ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "PrimeiroNome", reserva.VeiculoId);
             return View(reserva);
         }
+
+        public IActionResult CreateFromDetails() {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,Concluida,EstadoEntregaId,DataRecolha,DataEntrega,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
+            //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
+            //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
+            //TODO IDVEICULO
+            
+            var user = await _userManager.GetUserAsync(User);
+            reserva.VeiculoId = idcar;
+            reserva.UtilizadorId = user.Id;
+            reserva.Concluida = false;
+            ModelState.Remove(nameof(reserva.EstadoRecolha));
+            ModelState.Remove(nameof(reserva.EstadoEntrega));
+            ModelState.Remove(nameof(reserva.Veiculo));
+            ModelState.Remove(nameof(reserva.Utilizador));
+            ModelState.Remove(nameof(reserva.Utilizador));
+
+            // verifica se a data é válida
+            //TODO Melhorar função IsValidDate(reserva)
+
+            if (ModelState.IsValid) {
+                _context.Add(reserva);
+                await _context.SaveChangesAsync();
+                return View(reserva);
+            }
+            return View();
+        }
+
+        private bool IsValidDate(Reserva booking) {
+
+            var reservas = _context.reservas.Where(r => r.VeiculoId == booking.VeiculoId);
+                foreach (Reserva r in reservas)
+                {
+                        if (booking.DataEntrega < r.DataEntrega && booking.DataRecolha < r.DataEntrega)
+                        {
+                    return false;
+                        }
+                        else if (booking.DataEntrega > r.DataRecolha && booking.DataRecolha > r.DataRecolha)
+                        {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         // GET: Reservas/Edit/5
         public async Task<IActionResult> Edit(int? id)

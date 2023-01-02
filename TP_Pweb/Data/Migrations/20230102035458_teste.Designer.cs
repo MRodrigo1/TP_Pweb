@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TP_Pweb.Data;
 
@@ -11,9 +12,10 @@ using TP_Pweb.Data;
 namespace TP_Pweb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230102035458_teste")]
+    partial class teste
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -207,11 +209,15 @@ namespace TP_Pweb.Data.Migrations
                     b.Property<bool>("Concluido")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FuncionarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("NrKilometros")
                         .HasColumnType("int");
 
-                    b.Property<string>("UtilizadorId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("UtilizadorId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("danos")
                         .HasColumnType("bit");
@@ -225,7 +231,7 @@ namespace TP_Pweb.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UtilizadorId");
+                    b.HasIndex("FuncionarioId");
 
                     b.ToTable("Estado");
                 });
@@ -254,10 +260,9 @@ namespace TP_Pweb.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UtilizadorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("VeiculoId")
+                    b.Property<int?>("VeiculoId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -453,7 +458,9 @@ namespace TP_Pweb.Data.Migrations
                 {
                     b.HasOne("TP_Pweb.Models.Utilizador", "Funcionario")
                         .WithMany()
-                        .HasForeignKey("UtilizadorId");
+                        .HasForeignKey("FuncionarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Funcionario");
                 });
@@ -470,15 +477,11 @@ namespace TP_Pweb.Data.Migrations
 
                     b.HasOne("TP_Pweb.Models.Utilizador", "Utilizador")
                         .WithMany("reservas")
-                        .HasForeignKey("UtilizadorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UtilizadorId");
 
                     b.HasOne("TP_Pweb.Models.Veiculo", "Veiculo")
                         .WithMany("reservas")
-                        .HasForeignKey("VeiculoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VeiculoId");
 
                     b.Navigation("EstadoEntrega");
 

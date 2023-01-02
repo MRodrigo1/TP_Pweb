@@ -6,7 +6,7 @@
 }
 
 
-<h1>Details</h1>
+<h1>Detalhes veiculo</h1>
 
 <div>
     <h4>Veiculo</h4>
@@ -27,9 +27,6 @@
                 <img class="img-thumbnail" style="max-width:500px ; max-height:500px" src="~/img/defaultcar.jpg">
             </dd>
         }
-
-        <a asp-area="" asp-controller="Reservas" asp-action="Create">Realizar Reserva</a>
-
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Modelo)
         </dt>
@@ -68,6 +65,13 @@
         </dd>
     </dl>
 </div>
+    @*<a asp-action="CreateFromDetails" asp-controller="Reservas" asp-route-arg1="@Model?.Id">Reservar</a>*@
+   @using (Html.BeginForm("CreateFromDetails", "Reservas", FormMethod.Post))
+    {
+    <p>Carro: <input type="text" name="idcar" value="@Model.Id" /></p>
+    <input type="submit" value="Reserva" />
+}
+    @*<input type="button" name="VId" class="btn btn-success mt-5" value="reserva" onclick="@("window.location.href='" + Url.Action("CreateFromDetails", "Reservas", new { VId = @Model.Id }) + "'");" />*@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

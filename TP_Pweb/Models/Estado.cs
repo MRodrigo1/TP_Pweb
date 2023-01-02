@@ -7,10 +7,10 @@
         public Boolean Concluido { get; set; }
         public int NrKilometros { get; set; }
         public Boolean danos { get; set; }
+        public Boolean danos2 { get; set; }
         public string observacoes { get; set; }
-        public DateTime dataReserva { get; set; }
         //Relações
-        public int? UtilizadorId { get; set; }
+        public string? UtilizadorId { get; set; }
         public Utilizador Funcionario { get; set; }
 
 

@@ -1,0 +1,27 @@
+﻿@model TP_Pweb.Models.Reserva
+
+<div class="container-fluid d-flex flex-column">
+    <form asp-action="CreateFromDetails">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="VeiculoId" />
+        <div class="d-flex flex-row w-50 justify-content-between">
+            <div class="form-group">
+                <label asp-for="DataEntrega" class="control-label"></label>
+                <input asp-for="DataEntrega" class="form-control" />
+                <span asp-validation-for="DataEntrega" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataRecolha" class="control-label"></label>
+                <input asp-for="DataRecolha" class="form-control" />
+                <span asp-validation-for="DataRecolha" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Reserva" class="btn btn-success mt-5" />
+        </div>
+    </form>
+    
+    <div>
+        <a class="btn btn-danger w-auto" asp-action="Index">Cancel</a>
+    </div>
+</div>

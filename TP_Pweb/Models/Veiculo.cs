@@ -12,5 +12,6 @@
         public Empresa empresa { get; set; }
         public int? CategoriaId { get; set; }
         public Categoria categoria { get; set; }
+        public ICollection<Reserva>? reservas { get; set; }
     }
 }
