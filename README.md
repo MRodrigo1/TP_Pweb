@@ -52,14 +52,14 @@ _Assinalar o estado em que o veículo é entregue/levantado ao/pelo cliente_
 
 
 [Cliente] Área de clientes
-- [ ] Efectuar uma pesquisa (similar ao utilizador anónimo)
-- [ ] Efectuar a reserva de um veículo
+- [x] Efectuar uma pesquisa (similar ao utilizador anónimo)
+- [x] Efectuar a reserva de um veículo
 - [ ] Consultar o histórico de reservas
 - [ ] Consultar os detalhes de uma reserva
 
 [Utilizador Anónimo] Área de acesso livre
-- [ ] Pesquisar veículos por localização, tipo de veículo e data (data de levantamento e data de entrega)
-- [ ] O resultado da pesquisa deve ser uma lista dos veículos disponíveis, indicando o custo e a empresa de aluguer a que pertence, bem como a avaliação da empresa
+- [x] Pesquisar veículos por localização, tipo de veículo e data (data de levantamento e data de entrega)
+- [x] O resultado da pesquisa deve ser uma lista dos veículos disponíveis, indicando o custo e a empresa de aluguer a que pertence, bem como a avaliação da empresa
 - [ ] Deve ser possível filtrar os resultados por categoria de veículo e por empresa
 - [ ] Deve ser possível ordenar os resultados por preço mais baixo/alto e/ou por classificação da empresa
-- [ ] Efectuar o registo como Cliente
+- [x] Efectuar o registo como Cliente
