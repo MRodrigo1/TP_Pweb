@@ -13,9 +13,9 @@
 - [ ] Apagar registos
 
 ### Gestão de utilizadores
-- [ ] Listar
-- [ ] Editar
-- [ ] Ativar ou inativar utilizadores
+- [x] Listar
+- [x] Editar
+- [x] Ativar ou inativar utilizadores
 
 [Gestor] Área de gestor de uma empresa de aluguer
 ### Gestão de funcionários
