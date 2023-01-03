@@ -15,15 +15,5 @@ namespace TP_Pweb.Controllers
         {
             return View(await _roleManager.Roles.ToListAsync());
         }
-        [HttpPost]
-        public async Task<IActionResult> AddRole(string roleName)
-        {
-            /* código a criar */
-            if (roleName != null)
-            {
-                await _roleManager.CreateAsync(new IdentityRole(roleName.Trim()));
-            }
-            return RedirectToAction("Index");
-        }
     }
 }

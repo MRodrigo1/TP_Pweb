@@ -319,24 +319,27 @@ namespace TP_Pweb.Controllers
                 pesquisaVeiculo.DataFinalPesquisa = DataFinalPesquisa;
 
             //Verificar data nas reservas
-            //var reservas = _context.reservas.ToList();
-            //foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos) {
-            //    foreach (Reserva r in reservas) {
-            //        if (v.Id == r.VeiculoId)
-            //        {
-            //            if (DataInicialPesquisa < r.DataEntrega && DataFinalPesquisa < r.DataEntrega)
-            //            {
-            //                pesquisaVeiculo.ListaDeVeiculos.Remove(v);
-            //            }
-            //            else if (DataInicialPesquisa > r.DataRecolha && DataFinalPesquisa > r.DataRecolha)
-            //            {
-            //                pesquisaVeiculo.ListaDeVeiculos.Remove(v);
-            //            }
-            //        }
-            //    }
-            //}
-            
-            
+            var reservas = _context.reservas.ToList();
+            foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos)
+            {
+                foreach (Reserva r in reservas)
+                {
+                    if (v.Id == r.VeiculoId)
+                    {
+                        if (DataInicialPesquisa < r.DataEntrega && DataFinalPesquisa < r.DataEntrega)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                        else if (DataInicialPesquisa > r.DataRecolha && DataFinalPesquisa > r.DataRecolha)
+                        {
+                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                        }
+                        //ADICIONAR NA LISTA NOVA   
+                    }
+                }
+            }
+
+
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
             return View(pesquisaVeiculo);
 

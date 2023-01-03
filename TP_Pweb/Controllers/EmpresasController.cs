@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PWEB_AulasP_2223.Data;
 using TP_Pweb.Data;
 using TP_Pweb.Models;
 
@@ -13,10 +15,14 @@ namespace TP_Pweb.Controllers
     public class EmpresasController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Utilizador> _userManager;
+        private readonly SignInManager<Utilizador> _signInManager;
 
-        public EmpresasController(ApplicationDbContext context)
+        public EmpresasController(ApplicationDbContext context, UserManager<Utilizador> userManager, SignInManager<Utilizador> signInManager)
         {
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         // GET: Empresas
@@ -33,12 +39,21 @@ namespace TP_Pweb.Controllers
                 return NotFound();
             }
 
-            var empresa = await _context.Empresa
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var empresa = await _context.Empresa.FirstOrDefaultAsync(m => m.Id == id);
             if (empresa == null)
             {
                 return NotFound();
             }
+
+            var users = await _userManager.Users.ToListAsync();
+            List<Utilizador> funcionarios = new List<Utilizador>();
+            foreach (var user in users) {
+                if (user.EmpresaId == empresa.Id) {
+                    funcionarios.Add(user);
+                }    
+            }
+            ViewBag.FuncionariosSize = funcionarios.Count;
+            ViewBag.FuncionariosEmpresa = funcionarios;
 
             return View(empresa);
         }
@@ -56,10 +71,35 @@ namespace TP_Pweb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,avaliacao")] Empresa empresa)
         {
+            empresa.ativo = true;
             if (ModelState.IsValid)
             {
                 _context.Add(empresa);
                 await _context.SaveChangesAsync();
+                
+                var empresacriada = await _context.Empresa.Where(e => e.Nome == empresa.Nome).FirstOrDefaultAsync();
+
+                var GestorEmpresaCriada = new Utilizador
+                {
+                    PrimeiroNome = "Gestor[" + empresa.Nome + "]",
+                    UltimoNome = "Gestor",
+                    NIF = 000000000,
+                    ativo=true,
+                    EmpresaId = empresacriada.Id,
+                    Empresa = empresacriada,
+                    UserName = empresa.Nome + "@gestores.com",
+                    Email = empresa.Nome + "@gestores.com",
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true
+                };
+
+                var checkunique = await _userManager.FindByEmailAsync(GestorEmpresaCriada.Email);
+
+                if (checkunique == null) {
+                    await _userManager.CreateAsync(GestorEmpresaCriada, "Gestor1.");
+                    await _userManager.AddToRoleAsync(GestorEmpresaCriada, Roles.Gestor.ToString());
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(empresa);

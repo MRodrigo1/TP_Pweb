@@ -65,13 +65,17 @@
         </dd>
     </dl>
 </div>
-    @*<a asp-action="CreateFromDetails" asp-controller="Reservas" asp-route-arg1="@Model?.Id">Reservar</a>*@
    @using (Html.BeginForm("CreateFromDetails", "Reservas", FormMethod.Post))
-    {//TODO ADICIONAR AS DATAS AQUI PARA PASSAR AO METODO
-    <p>Carro: <input type="text" name="idcar" value="@Model.Id" />@Model.Modelo</p>
+    {
+    <input type="text" name="idcar" value="@Model.Id" hidden />
+    <label></label>
+    <input type="date" name="datainicial" required
+		oninvalid="this.setCustomValidity('Por Favor insira uma data de começo')" 
+		oninput="setCustomValidity('')"/>
+    <input type="date" name="datafinal" required
+		oninvalid="this.setCustomValidity('Por Favor insira uma data de fim')" 
+		oninput="setCustomValidity('')"/>
     <input type="submit" value="Reserva" />
-}
-    @*<input type="button" name="VId" class="btn btn-success mt-5" value="reserva" onclick="@("window.location.href='" + Url.Action("CreateFromDetails", "Reservas", new { VId = @Model.Id }) + "'");" />*@
-<div>
+}<div>
     <a asp-action="Index">Back to List</a>
 </div>

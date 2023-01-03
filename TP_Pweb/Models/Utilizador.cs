@@ -9,6 +9,8 @@ namespace TP_Pweb.Models
         public DateTime DataNascimento { get; set; }
         public int NIF { get; set; }
         public Boolean ativo { get; set; }
+        public int? EmpresaId { get; set; }
+        public Empresa Empresa { get; set; }
         public ICollection<Reserva>? reservas { get; set; }
 
     }
