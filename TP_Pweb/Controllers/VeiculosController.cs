@@ -93,7 +93,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FotoDisplay,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo,IFormFile FotoVeiculo)
+        public async Task<IActionResult> Create([Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo,IFormFile FotoVeiculo)
         {
             //veiculo.empresa = _context.Empresa.Where(empresaid =>Empresa)
             //ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
@@ -172,7 +172,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,custo,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo, IFormFile FotoVeiculo, [FromForm] List<IFormFile> fotosVeiculos)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo, IFormFile FotoVeiculo, [FromForm] List<IFormFile> fotosVeiculos)
         {
             ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
             ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
@@ -320,6 +320,7 @@ namespace TP_Pweb.Controllers
 
             //Verificar data nas reservas
             var reservas = _context.reservas.ToList();
+
             foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos)
             {
                 foreach (Reserva r in reservas)
@@ -338,7 +339,6 @@ namespace TP_Pweb.Controllers
                     }
                 }
             }
-
 
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
             return View(pesquisaVeiculo);

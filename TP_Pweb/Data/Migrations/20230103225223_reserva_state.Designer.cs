@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TP_Pweb.Data;
 
@@ -11,9 +12,10 @@ using TP_Pweb.Data;
 namespace TP_Pweb.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230103225223_reserva_state")]
+    partial class reserva_state
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -377,9 +379,6 @@ namespace TP_Pweb.Data.Migrations
                     b.Property<int?>("CategoriaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustoDia")
-                        .HasColumnType("int");
-
                     b.Property<int?>("EmpresaId")
                         .HasColumnType("int");
 
@@ -393,6 +392,9 @@ namespace TP_Pweb.Data.Migrations
                     b.Property<string>("Modelo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("custo")
+                        .HasColumnType("int");
 
                     b.Property<int>("nrKm")
                         .HasColumnType("int");

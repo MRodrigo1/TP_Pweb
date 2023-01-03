@@ -44,7 +44,7 @@ namespace TP_Pweb.Controllers
             {
                 return NotFound();
             }
-
+           
             var users = await _userManager.Users.ToListAsync();
             List<Utilizador> funcionarios = new List<Utilizador>();
             foreach (var user in users) {

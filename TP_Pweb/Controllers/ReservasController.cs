@@ -64,7 +64,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Concluida,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
+        public async Task<IActionResult> Create([Bind("Id,state,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
         {
             if (ModelState.IsValid)
             {
@@ -83,11 +83,10 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,Concluida,EstadoEntregaId,DataRecolha,DataEntrega,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,EstadoEntregaId,DataRecolha,DataEntrega,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
             
-
             ModelState.Remove(nameof(reserva.EstadoRecolha));
             ModelState.Remove(nameof(reserva.EstadoEntrega));
             ModelState.Remove(nameof(reserva.Veiculo));
@@ -96,9 +95,7 @@ namespace TP_Pweb.Controllers
             var user = await _userManager.GetUserAsync(User);
             reserva.VeiculoId = idcar;
             reserva.UtilizadorId = user.Id;
-            reserva.Concluida = false;
-           
-
+            reserva.state = Reserva.State.Pendente;
 
             // verifica se a data é válida
             //TODO Melhorar função IsValidDate(reserva)
@@ -154,7 +151,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Concluida,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,state,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
         {
             if (id != reserva.Id)
             {

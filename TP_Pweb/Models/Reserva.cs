@@ -2,8 +2,15 @@
 {
     public class Reserva
     {
+        public enum State
+        {
+            Pendente,
+            Decorrer,
+            Cancelada
+        }
+
         public int Id { get; set; }
-        public Boolean Concluida { get; set; }
+        public State state { get; set; }
         public int? EstadoEntregaId { get; set; }
         public Estado EstadoEntrega { get; set; }
         public int? EstadoRecolhaId { get; set; }
