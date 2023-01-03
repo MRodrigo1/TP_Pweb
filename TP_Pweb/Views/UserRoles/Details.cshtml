@@ -1,0 +1,31 @@
+﻿
+@model TP_Pweb.ViewModels.ManageUserRolesViewModel
+
+@{
+    ViewData["Title"] = "Manager User Roles";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+<h1>Manager User Roles</h1>
+<form method="post">
+    <div class="card">
+        <div class="card-header">
+            <h2>Ativar/Desativar Contas</h2>
+            <span class="badge bg-dark text-white">@ViewBag.UserName</span> Add/Remove Roles
+
+        </div>
+        @if (Model.active == true)
+        {
+            <input asp-for="@Model.active" class="form-check-input" value="Desativar Conta?"/>
+        }
+        else
+        {
+            <input asp-for="@Model.active" class="form-check-input" value="Ativar Conta?"/>
+        }
+        
+
+        <input type="submit" value="update" class="btn btn-primary" style="width:auto"></input>
+
+    </div>
+
+</form>
+
