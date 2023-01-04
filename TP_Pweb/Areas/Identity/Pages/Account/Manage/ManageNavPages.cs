@@ -3,6 +3,7 @@
 #nullable disable
 
 using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace  TP_Pweb.Areas.Identity.Pages.Account.Manage

@@ -184,11 +184,31 @@ namespace TP_Pweb.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Empresa'  is null.");
             }
             var empresa = await _context.Empresa.FindAsync(id);
-            if (empresa != null)
+
+            //Eliminar se nao tiver veiculos
+            var veiculos = await _context.veiculos.ToListAsync();
+
+            bool VeiculosBool = true;
+                foreach (var veiculo in veiculos)
+                {
+                if (veiculo.EmpresaId == id)
+                    VeiculosBool = false;
+                }
+
+            if (empresa != null && VeiculosBool)
             {
+                //Apagar o gestor associado com o id da empresa
+
+                //TODO DESASSOCIAR TODOS OS UTILIZADORES COM O ID DA EMPRESA
+                var users = await _userManager.Users.ToListAsync();
+                foreach(var u in users) { 
+                    if(u.EmpresaId == id)
+                        _userManager.DeleteAsync(u);
+                }
                 _context.Empresa.Remove(empresa);
             }
-            
+                //Notificar que nao eliminou
+                
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
