@@ -1,10 +1,10 @@
 [Administrador] Área de administrador da plataforma
 ### Gestão de empresas
-- [ ] Listar registo de empresas - com filtros (nome, estado da subscrição) e com ordenação
+- [1/2] Listar registo de empresas - com filtros (nome, estado da subscrição) e com ordenação
 - [x] Adicionar registo de empresas - automaticamente cria um utilizador com perfil gestor, associado à empresa
 - [ ] Editar registo de empresas
-- [ ] Apagar registo de empresas (apenas se ainda não existirem veículos)
-- [ ] Ativar ou inativar empresas
+- [x] Apagar registo de empresas (apenas se ainda não existirem veículos)
+- [x] Ativar ou inativar empresas
 
 ### Gestão de categorias de veículos
 - [ ] Listar
