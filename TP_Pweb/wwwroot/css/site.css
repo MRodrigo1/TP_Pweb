@@ -16,3 +16,11 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+<style >
+.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+</style >

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,12 +27,14 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Empresas
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index()
         {
               return View(await _context.Empresa.ToListAsync());
         }
 
         // GET: Empresas/Details/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Empresa == null)
@@ -57,6 +60,7 @@ namespace TP_Pweb.Controllers
 
             return View(empresa);
         }
+        [Authorize(Roles = "Administrador")]
 
         public async Task<IActionResult> AtivarDesativarEmpresa(int? id)
         {
@@ -75,6 +79,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> AtivarDesativarEmpresa(int id, [Bind("Id,Nome,avaliacao,ativo")] Empresa empresa)
         {
             if (id == null || _context.Empresa == null)
@@ -105,6 +110,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Empresas/Create
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             return View();
@@ -115,9 +121,11 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create([Bind("Id,Nome,avaliacao")] Empresa empresa)
         {
             empresa.ativo = true;
+
             if (ModelState.IsValid)
             {
                 _context.Add(empresa);
@@ -144,7 +152,6 @@ namespace TP_Pweb.Controllers
                 if (checkunique == null) {
                     await _userManager.CreateAsync(GestorEmpresaCriada, "Gestor1.");
                     await _userManager.AddToRoleAsync(GestorEmpresaCriada, Roles.Gestor.ToString());
-                    await _context.SaveChangesAsync();
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -152,6 +159,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Empresas/Edit/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Empresa == null)
@@ -172,6 +180,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,avaliacao")] Empresa empresa)
         {
             if (id != empresa.Id)
@@ -202,8 +211,9 @@ namespace TP_Pweb.Controllers
             return View(empresa);
         }
 
-            // GET: Empresas/Delete/5
-            public async Task<IActionResult> Delete(int? id)
+        // GET: Empresas/Delete/5
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Empresa == null)
             {
@@ -223,6 +233,7 @@ namespace TP_Pweb.Controllers
         // POST: Empresas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Empresa == null)
@@ -246,17 +257,22 @@ namespace TP_Pweb.Controllers
                 //Apagar o gestor associado com o id da empresa
 
                 //TODO DESASSOCIAR TODOS OS UTILIZADORES COM O ID DA EMPRESA
-                var users = await _userManager.Users.ToListAsync();
-                foreach(var u in users) { 
-                    if(u.EmpresaId == id)
-                        _userManager.DeleteAsync(u);
-                }
+                await deleteUsersAsync(empresa.Id);
                 _context.Empresa.Remove(empresa);
+                await _context.SaveChangesAsync();
             }
                 //Notificar que nao eliminou
                 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task deleteUsersAsync(int id) {
+            var users = await _userManager.Users.ToListAsync();
+            foreach (var u in users)
+            {
+                if (u.EmpresaId == id)
+                    await _userManager.DeleteAsync(u);
+            }
         }
 
         private bool EmpresaExists(int id)

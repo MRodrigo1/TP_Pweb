@@ -81,13 +81,14 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
             
             ModelState.Remove(nameof(reserva.Veiculo));
             ModelState.Remove(nameof(reserva.Utilizador));
             ModelState.Remove(nameof(reserva.UtilizadorId));
+            ModelState.Remove(nameof(reserva.estados));
             var user = await _userManager.GetUserAsync(User);
             reserva.VeiculoId = idcar;
             reserva.UtilizadorId = user.Id;

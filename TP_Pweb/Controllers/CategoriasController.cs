@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,14 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Categorias
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index()
         {
               return View(await _context.categorias.ToListAsync());
         }
 
         // GET: Categorias/Details/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.categorias == null)
@@ -44,6 +47,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Categorias/Create
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +58,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create([Bind("Id,Nome")] Categoria categoria)
         {
             if (ModelState.IsValid)
@@ -66,6 +71,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Categorias/Edit/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.categorias == null)
@@ -86,6 +92,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Categoria categoria)
         {
             if (id != categoria.Id)
@@ -117,6 +124,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Categorias/Delete/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.categorias == null)
@@ -137,6 +145,7 @@ namespace TP_Pweb.Controllers
         // POST: Categorias/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.categorias == null)

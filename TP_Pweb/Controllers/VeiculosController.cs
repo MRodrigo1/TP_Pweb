@@ -120,8 +120,12 @@ namespace TP_Pweb.Controllers
                             await FotoVeiculo.CopyToAsync(dataStream);
                             veiculo.FotoDisplay = dataStream.ToArray();
                         }
-                    }else
-                        return RedirectToAction();//TODO VERIFICAR O TAMANHO DA IMAGEM
+                    }
+                    else
+                    {
+                        TempData["Error"] = String.Format("Imagem demasiado Grande.");
+                        return View(veiculo);
+                    }
                 }
                 _context.Add(veiculo);
                 await _context.SaveChangesAsync();
@@ -218,6 +222,7 @@ namespace TP_Pweb.Controllers
                     }
                     else
                     {
+                        TempData["Error"] = String.Format("Imagem demasiado Grande.");
                         return RedirectToAction(); //TODO VERIFICAR O TAMANHO DA IMAGEM
                     }
                 }

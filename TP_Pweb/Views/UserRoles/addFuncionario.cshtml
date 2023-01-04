@@ -1,0 +1,49 @@
+﻿@model TP_Pweb.Models.Utilizador
+
+<h1>Create</h1>
+
+<h4>Funcionario</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="addFuncionario" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PrimeiroNome" class="control-label"></label>
+                <input asp-for="PrimeiroNome" class="form-control" required/>
+                <span asp-validation-for="PrimeiroNome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UltimoNome" class="control-label"></label>
+                <input asp-for="UltimoNome" class="form-control" required />
+                <span asp-validation-for="UltimoNome" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" required/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataNascimento" class="control-label"></label>
+                <input asp-for="DataNascimento" class="form-control" required/>
+                <span asp-validation-for="DataNascimento" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="NIF" class="control-label"></label>
+                <input asp-for="NIF" class="form-control" required/>
+                <span asp-validation-for="NIF" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Adicionar Funcionario" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
