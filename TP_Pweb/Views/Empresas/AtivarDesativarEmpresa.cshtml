@@ -1,0 +1,27 @@
+﻿@model TP_Pweb.Models.Empresa
+
+<h1>Gerenciar empresas ativas</h1>
+<form method="post">
+    <div class="card">
+        <div class="card-header">
+            <h2>Ativar/Desativar Empresas</h2>
+            <span class="badge bg-white text-black"> Empresa: @Model.Nome</span>
+        </div>
+        @if (Model.ativo == true)
+        {
+            <label>Empresa Ativa, pretende desativar?</label>
+        }
+        else
+        {
+            <label>Empresa Inativa, pretende ativar?</label> 
+        }
+
+        <input asp-for="@Model.ativo" class="form-check-input"/>
+
+        <p></p>
+
+        <input type="submit" value="update" class="btn btn-primary" style="width:auto"></input>
+
+    </div>
+
+</form>

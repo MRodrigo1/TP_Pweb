@@ -58,6 +58,52 @@ namespace TP_Pweb.Controllers
             return View(empresa);
         }
 
+        public async Task<IActionResult> AtivarDesativarEmpresa(int? id)
+        {
+            if (id == null || _context.Empresa == null)
+            {
+                return NotFound();
+            }
+
+            var empresa = await _context.Empresa.FindAsync(id);
+            if (empresa == null)
+            {
+                return NotFound();
+            }
+            return View(empresa);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AtivarDesativarEmpresa(int id, [Bind("Id,Nome,avaliacao,ativo")] Empresa empresa)
+        {
+            if (id == null || _context.Empresa == null)
+            {
+                return NotFound();
+            }
+            var emp1 = await _context.Empresa.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (emp1 == null)
+            {
+                return NotFound();
+            }
+
+
+            var emp = await _context.Empresa.Where(e => e.Id == id).FirstAsync();
+
+            if (emp == null)
+                return NotFound();
+
+            emp.ativo = empresa.ativo;
+
+            _context.Update(emp);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+
+            return View(empresa);
+
+        }
+
         // GET: Empresas/Create
         public IActionResult Create()
         {
@@ -156,8 +202,8 @@ namespace TP_Pweb.Controllers
             return View(empresa);
         }
 
-        // GET: Empresas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+            // GET: Empresas/Delete/5
+            public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Empresa == null)
             {

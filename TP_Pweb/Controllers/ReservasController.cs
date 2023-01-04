@@ -25,7 +25,7 @@ namespace TP_Pweb.Controllers
         // GET: Reservas
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.reservas.Include(r => r.EstadoEntrega).Include(r => r.EstadoRecolha).Include(r => r.Utilizador).Include(r => r.Veiculo);
+            var applicationDbContext = _context.reservas.Include(r => r.Utilizador).Include(r => r.Veiculo);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -38,8 +38,6 @@ namespace TP_Pweb.Controllers
             }
 
             var reserva = await _context.reservas
-                .Include(r => r.EstadoEntrega)
-                .Include(r => r.EstadoRecolha)
                 .Include(r => r.Utilizador)
                 .Include(r => r.Veiculo)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -64,7 +62,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,state,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
+        public async Task<IActionResult> Create([Bind("Id,state,UtilizadorId,VeiculoId")] Reserva reserva)
         {
             if (ModelState.IsValid)
             {
@@ -83,12 +81,10 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,EstadoEntregaId,DataRecolha,DataEntrega,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
             
-            ModelState.Remove(nameof(reserva.EstadoRecolha));
-            ModelState.Remove(nameof(reserva.EstadoEntrega));
             ModelState.Remove(nameof(reserva.Veiculo));
             ModelState.Remove(nameof(reserva.Utilizador));
             ModelState.Remove(nameof(reserva.UtilizadorId));
@@ -139,8 +135,6 @@ namespace TP_Pweb.Controllers
             {
                 return NotFound();
             }
-            ViewData["EstadoEntregaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoEntregaId);
-            ViewData["EstadoRecolhaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoRecolhaId);
             ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", reserva.UtilizadorId);
             ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Id", reserva.VeiculoId);
             return View(reserva);
@@ -151,7 +145,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,state,EstadoEntregaId,EstadoRecolhaId,UtilizadorId,VeiculoId")] Reserva reserva)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,state,UtilizadorId,VeiculoId")] Reserva reserva)
         {
             if (id != reserva.Id)
             {
@@ -178,8 +172,6 @@ namespace TP_Pweb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EstadoEntregaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoEntregaId);
-            ViewData["EstadoRecolhaId"] = new SelectList(_context.Set<Estado>(), "Id", "Id", reserva.EstadoRecolhaId);
             ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", reserva.UtilizadorId);
             ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Id", reserva.VeiculoId);
             return View(reserva);
@@ -194,8 +186,6 @@ namespace TP_Pweb.Controllers
             }
 
             var reserva = await _context.reservas
-                .Include(r => r.EstadoEntrega)
-                .Include(r => r.EstadoRecolha)
                 .Include(r => r.Utilizador)
                 .Include(r => r.Veiculo)
                 .FirstOrDefaultAsync(m => m.Id == id);
