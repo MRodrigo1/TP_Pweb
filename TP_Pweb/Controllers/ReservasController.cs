@@ -157,7 +157,16 @@ namespace TP_Pweb.Controllers
         }
 
         private int calcularPreco(DateTime di, DateTime df,int custodia) {
-            return 1;
+
+            int NrDias = 0;
+            int p=0;
+
+            NrDias = (df - di).Days;
+           
+
+            p = custodia * NrDias;
+
+            return p;
         }
         private bool IsValidDate(Reserva booking) {
 

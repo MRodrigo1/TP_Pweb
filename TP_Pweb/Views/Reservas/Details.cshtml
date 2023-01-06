@@ -28,6 +28,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Veiculo.Modelo) '@Html.DisplayFor(model => model.Veiculo.Id)'
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.preco)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.preco)
+        </dd>
 
         @if (Model.state.Equals(Reserva.State.Decorrer))
         {
@@ -51,11 +57,17 @@
                 <dd class = "col-sm-10">   
 
                 </dd>
-                <dt class = "col-sm-10">   
+                <dt class = "col-sm-2">   
                     Danos
                 </dt>
                 <dd class = "col-sm-10">   
-
+                    
+                </dd>
+                <dt class="col-sm-2">
+                    Preco
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.preco)
                 </dd>
             }
         }
@@ -83,6 +95,12 @@
                 </dd>
                 <dd class = "col-sm-10">   
 
+                </dd>
+                <dt class="col-sm-2">
+                    Preco
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.preco)
                 </dd>
             }
         }
