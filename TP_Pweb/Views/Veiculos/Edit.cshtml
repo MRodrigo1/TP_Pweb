@@ -45,8 +45,8 @@
                     <div class="col p-2 m-2"
                     style="border-radius:10px; border:1px dotted #ccc;">
                     <a asp-action="deleteImage" asp-route-id="@Model.Id" asp-route-image="@file">
-                    <svg  onclick="return confirm('Tem a certeza que deseja apagar esta imagem?')" class="text-danger" width="24" height="24" aria-label="Trash"></svg>   
-                </a>
+                        <i class="bi bi-x-circle-fill fa-10x" style="font-size: 25px;color: red;" onclick="return confirm('Tem a certeza que deseja apagar esta imagem?')"></i>     
+                    </a>
 
                     <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
                     </div>

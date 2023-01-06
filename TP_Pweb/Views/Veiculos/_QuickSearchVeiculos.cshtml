@@ -4,6 +4,8 @@
  
 @using (Html.BeginForm("Search", "Veiculos", FormMethod.Get))
 { 
+	<div class="input-group justify-content-center">
+		<span class="input-group-text" ><i class="bi bi-search"></i></span>
 	<input type="text" name="LocalizacaoPesquisa" required 
 		oninvalid="this.setCustomValidity('Por Favor insira uma localização')" 
 		oninput="setCustomValidity('')"
@@ -24,5 +26,6 @@
 		oninput="setCustomValidity('')"
 	    id="DateFinalPesquisa" />
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+		</div>
 }
