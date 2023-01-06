@@ -54,7 +54,7 @@ namespace TP_Pweb.Controllers
             return View(ListaReservas);
         }
 
-        public async Task<IActionResult> CancelarReservaCli(int id) 
+        public async Task<IActionResult> CancelarReservaCli(int id)
         {
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
             if (reserva != null && reserva.state.Equals(Reserva.State.Pendente))
@@ -76,6 +76,28 @@ namespace TP_Pweb.Controllers
             }
             return RedirectToAction(nameof(AsMinhasReservas));
         }
+        public async Task<IActionResult> ClassificaEmpresa(int id) {
+            var reserva = await _context.reservas.Where(x => x.Id == id).FirstAsync();
+            return View(reserva);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ClassificaEmpresa(int id, int classifica) {
+            var reserva = await _context.reservas.Where(x => x.Id == id).FirstAsync();
+            var veiculo = await _context.veiculos.Where(v => v.Id == reserva.VeiculoId).FirstAsync();
+            if (reserva != null && reserva.state.Equals(Reserva.State.Concluida) && reserva.classificada == false)
+            {
+                var empresa = await _context.Empresa.Where(e => e.Id == veiculo.EmpresaId).FirstAsync();
+                var aux = empresa.avaliacao;
+                aux = (aux + classifica) / 2;
+                empresa.avaliacao = aux;
+                reserva.classificada = true;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(AsMinhasReservas));
+        }
+
 
         // GET: Reservas/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -130,10 +152,10 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva,int idcar) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
-            
+
             ModelState.Remove(nameof(reserva.Veiculo));
             ModelState.Remove(nameof(reserva.Utilizador));
             ModelState.Remove(nameof(reserva.UtilizadorId));
@@ -142,9 +164,10 @@ namespace TP_Pweb.Controllers
             reserva.VeiculoId = idcar;
             reserva.UtilizadorId = user.Id;
             reserva.state = Reserva.State.Pendente;
+            reserva.classificada = false;
             var veiculo = await _context.veiculos.Where(v => v.Id == idcar).FirstAsync();
 
-            reserva.preco = calcularPreco(reserva.DataEntrega,reserva.DataRecolha, veiculo.CustoDia);
+            reserva.preco = calcularPreco(reserva.DataEntrega, reserva.DataRecolha, veiculo.CustoDia);
             // verifica se a data é válida
             //TODO Melhorar função IsValidDate(reserva)
 
@@ -155,14 +178,51 @@ namespace TP_Pweb.Controllers
             }
             return View();
         }
+        public async Task<IActionResult> ProcessaEstado(int id)
+        {
+            return View();
+        }
+            [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessaEstado(int id, [Bind("NrKilometros,danos,observacoes")] Estado estado)
+        {
+            if (id == null || _context.reservas == null)
+            {
+                return NotFound();
+            }
 
-        private int calcularPreco(DateTime di, DateTime df,int custodia) {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotos");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string VeiculoPath = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\DanosPhotos\\" + id.ToString());
+
+            if (!Directory.Exists(VeiculoPath))
+                Directory.CreateDirectory(VeiculoPath);
+
+            var files = from file in Directory.EnumerateFiles(VeiculoPath)
+                        select string.Format("/DanosPhotos/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheiros"] = files;
+            ViewBag.ficheiros = files;
+
+            var reserva = await _context.reservas.Where(r => r.Id == id).FirstAsync();
+            if(reserva.state.Equals(Reserva.State.Pendente))
+                await ConfirmarReserva(id, estado.danos, estado.observacoes, estado.NrKilometros);
+            else if(reserva.state.Equals(Reserva.State.Entregue))
+                await EncerraReserva(id, estado.danos, estado.observacoes, estado.NrKilometros);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private int calcularPreco(DateTime di, DateTime df, int custodia) {
 
             int NrDias = 0;
-            int p=0;
+            int p = 0;
 
             NrDias = (df - di).Days;
-           
+
 
             p = custodia * NrDias;
 
@@ -171,14 +231,14 @@ namespace TP_Pweb.Controllers
         private bool IsValidDate(Reserva booking) {
 
             var reservas = _context.reservas.Where(r => r.VeiculoId == booking.VeiculoId);
-                foreach (Reserva r in reservas)
+            foreach (Reserva r in reservas)
+            {
+                if (booking.DataEntrega < r.DataEntrega && booking.DataRecolha < r.DataEntrega)
                 {
-                        if (booking.DataEntrega < r.DataEntrega && booking.DataRecolha < r.DataEntrega)
-                        {
                     return false;
-                        }
-                        else if (booking.DataEntrega > r.DataRecolha && booking.DataRecolha > r.DataRecolha)
-                        {
+                }
+                else if (booking.DataEntrega > r.DataRecolha && booking.DataRecolha > r.DataRecolha)
+                {
                     return false;
                 }
             }
@@ -242,7 +302,7 @@ namespace TP_Pweb.Controllers
         }
 
         [Authorize(Roles = "Funcionario,Gestor")]
-        public async Task<IActionResult> ConfirmarReserva(int id) {
+        public async Task<IActionResult> ConfirmarReserva(int id,bool danos,string observacoes,int nrkm) {
 
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
             var veiculo = _context.veiculos.Where(x => x.Id == reserva.VeiculoId).FirstOrDefault();
@@ -252,9 +312,9 @@ namespace TP_Pweb.Controllers
             var estado = new Estado()
             {
                 state = Estado.State.Entrega,
-                NrKilometros = veiculo.nrKm,
-                danos = false,
-                observacoes = "",
+                NrKilometros = nrkm,
+                danos = danos,
+                observacoes = observacoes,
                 FuncionarioId = func.Id,
                 ReservaId = reserva.Id
             };
@@ -279,7 +339,6 @@ namespace TP_Pweb.Controllers
 
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
 
-
             if (reserva != null) {
                 if (!reserva.state.Equals(Reserva.State.Pendente))
                 {
@@ -294,9 +353,8 @@ namespace TP_Pweb.Controllers
         }
 
         [Authorize(Roles = "Funcionario,Gestor")]
-        public async Task<IActionResult> EncerraReserva(int id)
+        public async Task<IActionResult> EncerraReserva(int id,bool danos, string observacoes, int nrkm)
         {
-
             var reserva = _context.reservas.Where(x => x.Id == id).Include(x => x.estados).FirstOrDefault();
             var veiculo = _context.veiculos.Where(x => x.Id == reserva.VeiculoId).FirstOrDefault();
             var func = await _userManager.GetUserAsync(User);
@@ -311,9 +369,9 @@ namespace TP_Pweb.Controllers
             var estado = new Estado()
             {
                 state = Estado.State.Recolha,
-                NrKilometros = veiculo.nrKm,
-                danos = false,
-                observacoes = "",
+                NrKilometros = nrkm,
+                danos = danos,
+                observacoes = observacoes,
                 FuncionarioId = func.Id,
                 ReservaId = reserva.Id
             };

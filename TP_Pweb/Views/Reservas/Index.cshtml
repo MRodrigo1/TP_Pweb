@@ -38,11 +38,11 @@
             </td>
             <td>
                 @if(item.state.Equals(Reserva.State.Pendente)){
-                <a asp-action="ConfirmarReserva" asp-route-id="@item.Id">Confirmar</a> 
+                <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Confirmar</a> 
                 }else if(item.state.Equals(Reserva.State.Pendente)){
                 <a asp-action="CancelarReserva" asp-route-id="@item.Id">Rejeitar</a> 
                 }else if(item.state.Equals(Reserva.State.Entregue)){
-                <a asp-action="EncerraReserva" asp-route-id="@item.Id">Encerrar</a>
+                <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Encerrar</a>
                 }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
             </td>

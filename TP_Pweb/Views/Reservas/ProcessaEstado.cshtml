@@ -1,0 +1,72 @@
+﻿@model TP_Pweb.Models.Estado
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Veiculo</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ProcessaEstado" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+             <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NrKilometros" class="control-label"></label>
+                <input asp-for="NrKilometros" class="form-control" />
+                <span asp-validation-for="NrKilometros" class="text-danger"></span>
+            </div>
+                <div class="form-group">
+                <label asp-for="danos" class="control-label"></label>
+                <input asp-for="danos" class="form-check-input" />
+                <span asp-validation-for="danos" class="text-danger"></span>
+            </div>
+            <div>
+					<label>Imagens Danos:</label>
+					<input name="fotosVeiculos" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+						    multiple class="form-control" />
+					<span class="text-danger"></span>
+                    <p>Adicionar imagens</p>
+            <p>Galeria de Imagens</p>
+            <div class="row d-flex">
+
+                @if (ViewBag.ficheiros == null)
+                {
+                    <p>Nehuma imagem inserida</p>
+                }
+                else
+                @foreach (var file in ViewBag.ficheiros)
+                {
+                    <div class="col p-2 m-2"
+                    style="border-radius:10px; border:1px dotted #ccc;">
+                    <a asp-action="deleteImage" asp-route-id="@Model.Id" asp-route-image="@file">
+                        <i class="bi bi-x-circle-fill fa-10x" style="font-size: 25px;color: red;" onclick="return confirm('Tem a certeza que deseja apagar esta imagem?')"></i>     
+                    </a>
+
+                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                    </div>
+                }
+            </div>
+				</div>
+            <div class="form-group">
+                <label asp-for="observacoes" class="control-label"></label>
+                <input asp-for="observacoes" class="form-control" />
+                <span asp-validation-for="observacoes" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

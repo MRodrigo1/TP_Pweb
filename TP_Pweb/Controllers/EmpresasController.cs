@@ -100,6 +100,21 @@ namespace TP_Pweb.Controllers
                 return NotFound();
            
             emp.ativo = empresa.ativo;
+            var users = await _userManager.Users.ToListAsync();
+            
+            foreach (var user in users) {
+                if (user.EmpresaId == emp.Id)
+                {
+                    if (emp.ativo == true)
+                    {
+                        user.ativo = true;
+                    }
+                    else
+                    {
+                        user.ativo = false;
+                    }
+                }
+            }
 
             _context.Update(emp);
             await _context.SaveChangesAsync();

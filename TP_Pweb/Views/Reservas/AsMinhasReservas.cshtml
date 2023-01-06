@@ -42,9 +42,9 @@
                     {
                         <a asp-action="EntregarReservaCli" asp-route-id="@item.Id">Entregar Veiculo</a>
                     }
-                    else if (item.state.Equals(Reserva.State.Concluida))
+                    else if (item.state.Equals(Reserva.State.Concluida) && item.classificada==false )
                     {
-                        <a asp-action="#" asp-route-id="@item.Id">Classificar</a>
+                        <a asp-action="ClassificaEmpresa" asp-route-id="@item.Id">Classificar</a>
                     }
 
                     | <a asp-action="Details" asp-route-id="@item.Id">Details</a>

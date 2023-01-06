@@ -15,7 +15,7 @@
         public DateTime DataEntrega { get; set; }
         public DateTime DataRecolha { get; set; }
         public int preco { get; set; }
-        //TODO apagar veiculo apaga reserva tratar
+        public bool classificada { get; set; }
         public string UtilizadorId { get; set; }
         public Utilizador Utilizador { get; set; }
         public int VeiculoId { get; set; }

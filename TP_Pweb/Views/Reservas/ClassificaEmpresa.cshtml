@@ -1,0 +1,13 @@
+﻿@model TP_Pweb.Models.Reserva
+
+@{
+    ViewData["Title"] = "ClassificaEmpresa";
+}
+
+<h1>Classificar empresa [0-10]</h1>
+
+@using (Html.BeginForm("ClassificaEmpresa", "Reservas", FormMethod.Post))
+{
+    <input type="number" name="classifica" value="" max="10" />
+    <button type="submit" class="btn btn-primary">Classificar</button>
+}
