@@ -7,6 +7,7 @@
         public string Modelo { get; set; }
         public string Localizacao { get; set; }
         public int CustoDia { get; set; }
+        public Boolean ativo { get; set; }
         public int nrKm { get; set; }
         public int? EmpresaId { get; set; }
         public Empresa empresa { get; set; }

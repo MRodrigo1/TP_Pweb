@@ -1,0 +1,32 @@
+﻿@model TP_Pweb.Models.Veiculo
+
+@{
+    ViewData["Title"] = "Manager User Roles";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+}
+
+<h1>Gerenciar Veiculos ativos</h1>
+<form method="post">
+    <div class="card">
+        <div class="card-header">
+            <h2>Ativar/Desativar Veiculos</h2>
+            <span class="badge bg-white text-black"> Modelo: @Model.Modelo</span>
+        </div>
+        @if (Model.ativo == true)
+        {
+            <label>Veiculo Ativo, pretende desativar?</label>
+        }
+        else
+        {
+            <label>Veiculo Inativo, pretende ativar?</label> 
+        }
+
+        <input asp-for="@Model.ativo" class="form-check-input"/>
+
+        <p></p>
+
+        <input type="submit" value="update" class="btn btn-primary" style="width:auto"></input>
+
+    </div>
+
+</form>

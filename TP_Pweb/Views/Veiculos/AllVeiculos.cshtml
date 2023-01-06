@@ -5,14 +5,11 @@
 <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.js"></script>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "AllVeiculos";
 }
 
-<h1>Index</h1>
+<h1>Todos os veiculos</h1>
 
-<p>
-    <a asp-action="Create">Adicionar Veiculo</a>
-</p>
 <table class="table" data-toggle="table" data-search="true">
     <thead>
         <tr>
@@ -73,10 +70,7 @@
                 @Html.DisplayFor(modelItem => item.categoria.Nome)
             </td>
             <td>
-                <a asp-action="AtivaDesativaVeiculos" asp-route-id="@item.Id">Ativar/Desativar</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar Veiculo</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Apagar Veiculo</a>
             </td>
         </tr>
 }

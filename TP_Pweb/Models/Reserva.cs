@@ -6,6 +6,8 @@
         {
             Pendente,
             Decorrer,
+            Entregue,
+            Concluida,
             Cancelada
         }
         public int Id { get; set; }

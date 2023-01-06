@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,10 +26,25 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Veiculos
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.veiculos.Include(v => v.categoria).Include(v => v.empresa);
-            return View(await applicationDbContext.ToListAsync());
+            var veiculos = await _context.veiculos.Include(v => v.categoria).Include(v => v.empresa).ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
+            var veiculosSel = new List<Veiculo>();
+
+            foreach (var veiculo in veiculos) {
+                if (veiculo.EmpresaId == user.EmpresaId)
+                    veiculosSel.Add(veiculo);
+            }
+
+            return View(veiculosSel);
+        }
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> AllVeiculos()
+        {
+            var veiculos = await _context.veiculos.Include(v => v.categoria).Include(v => v.empresa).ToListAsync();
+            return View(veiculos);
         }
 
         // GET: Veiculos/Details/5
@@ -79,11 +95,18 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Veiculos/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Funcionario,Gestor")]
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
-            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
 
+            ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
+            var user = await _userManager.GetUserAsync(User);
+            var empresa = await _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefaultAsync();
+            if (empresa != null)
+            {
+                //ViewBag.EmpresaNome = empresa.Nome;
+                ViewData["EmpresaNome"] = new SelectList(_context.Empresa.Where(e =>e.Nome == empresa.Nome), "Id", "Nome");
+            }
 
             return View();
         }
@@ -91,21 +114,32 @@ namespace TP_Pweb.Controllers
         // POST: Veiculos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Create([Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo,IFormFile FotoVeiculo)
         {
             //veiculo.empresa = _context.Empresa.Where(empresaid =>Empresa)
             //ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
             ViewBag.CategoriaId = new SelectList(_context.categorias, "Id", "Nome");
-            ViewData["EmpresaId"] = new SelectList(_context.Set<Empresa>(), "Id", "Nome");
+
+            var user = await _userManager.GetUserAsync(User);
+            var empresa = await _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefaultAsync();
+            if(empresa != null) {
+                ViewBag.EmpresaNome = empresa.Nome;
+            }
+            veiculo.EmpresaId = user.EmpresaId;
             //TODO Remove empresa e categoria, verificação
             ModelState.Remove(nameof(veiculo.empresa));
             ModelState.Remove(nameof(veiculo.categoria));
-            if(FotoVeiculo == null)
+            veiculo.ativo = true;
+            //TODO MENSAGEM DE ERRO
+
+            if (FotoVeiculo == null)
                 ModelState.Remove(nameof(FotoVeiculo));
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && veiculo.EmpresaId!=null)
                 {
                 if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot" + "/VeiculosPhotos/" + veiculo.Id)))
                 {
@@ -296,7 +330,17 @@ namespace TP_Pweb.Controllers
                 return Problem("Entity set 'ApplicationDbContext.veiculos'  is null.");
             }
             var veiculo = await _context.veiculos.FindAsync(id);
-            if (veiculo != null)
+            
+            var reservas = await _context.reservas.ToListAsync();
+
+            Boolean isReservado = true;
+            foreach (var reserva in reservas)
+            {
+                if (reserva.VeiculoId == id)
+                    isReservado = false;
+            }
+
+            if (veiculo != null && isReservado)
             {
                 _context.veiculos.Remove(veiculo);
             }
@@ -304,6 +348,10 @@ namespace TP_Pweb.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
+
+       
 
         private bool VeiculoExists(int id)
         {
@@ -396,6 +444,52 @@ namespace TP_Pweb.Controllers
                 else
                     return false;
             }
+
+        [Authorize(Roles = "Administrador,Funcionario,Gestor")]
+        public async Task<IActionResult> AtivaDesativaVeiculos(int? id)
+        {
+            if (id == null || _context.veiculos == null)
+            {
+                return NotFound();
+            }
+
+            var veiculo = await _context.veiculos.FindAsync(id);
+            if (veiculo == null)
+            {
+                return NotFound();
+            }
+            return View(veiculo);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Funcionario,Gestor")]
+        public async Task<IActionResult> AtivaDesativaVeiculos(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId,ativo")] Veiculo veiculo)
+        {
+            if (id == null || _context.veiculos == null)
+            {
+                return NotFound();
+            }
+            var vei = await _context.veiculos.FirstOrDefaultAsync(m => m.Id == id);
+
+            if (vei == null)
+            {
+                return NotFound();
+            }
+
+
+            var veiculoselecionado = await _context.veiculos.Where(v => v.Id == id).FirstAsync();
+
+            if (veiculoselecionado == null)
+                return NotFound();
+
+            veiculoselecionado.ativo = veiculo.ativo;
+
+            _context.Update(veiculoselecionado);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+
+        }
 
         public async Task<IActionResult> deleteImage(int id, string image)
         {

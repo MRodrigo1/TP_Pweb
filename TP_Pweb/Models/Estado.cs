@@ -13,10 +13,9 @@
         public State state { get; set; }
         public int NrKilometros { get; set; }
         public Boolean danos { get; set; }
-        public Boolean danos2 { get; set; }
         public string observacoes { get; set; }
         //Relações
-        public string? UtilizadorId { get; set; }
+        public string? FuncionarioId { get; set; }
         public Utilizador Funcionario { get; set; }
         public int? ReservaId { get; set; }
         public Reserva Reserva { get; set; }

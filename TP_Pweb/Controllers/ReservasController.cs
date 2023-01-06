@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,10 +24,48 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Reservas
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.reservas.Include(r => r.Utilizador).Include(r => r.Veiculo);
-            return View(await applicationDbContext.ToListAsync());
+            var reservas = await _context.reservas.Include(r => r.Utilizador).Include(r => r.Veiculo).ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
+            var veiculo = await _context.veiculos.Where(v => v.EmpresaId == user.EmpresaId).ToListAsync();
+            var ListaReservas = new List<Reserva>();
+            foreach (var reserva in reservas)
+            {
+                if (veiculo.Contains(reserva.Veiculo))
+                    ListaReservas.Add(reserva);
+            }
+            return View(ListaReservas);
+        }
+
+        [Authorize(Roles = "Cliente")]
+        public async Task<IActionResult> AsMinhasReservas()
+        {
+            var reservas = await _context.reservas.Include(r => r.Utilizador).Include(r => r.Veiculo).ToListAsync();
+            var user = await _userManager.GetUserAsync(User);
+            var ListaReservas = new List<Reserva>();
+            foreach (var reserva in reservas)
+            {
+                if (reserva.UtilizadorId == user.Id)
+                    ListaReservas.Add(reserva);
+            }
+            return View(ListaReservas);
+        }
+
+        public async Task<IActionResult> CancelarReservaCli(int id) 
+        {
+            var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+            if (reserva != null && reserva.state.Equals(Reserva.State.Pendente))
+            {
+                reserva.state = Reserva.State.Cancelada;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(AsMinhasReservas));
+        }
+
+        public async Task<IActionResult> EntregarReservaCli(int id) { 
         }
 
         // GET: Reservas/Details/5
@@ -176,6 +215,47 @@ namespace TP_Pweb.Controllers
             ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", reserva.UtilizadorId);
             ViewData["VeiculoId"] = new SelectList(_context.veiculos, "Id", "Id", reserva.VeiculoId);
             return View(reserva);
+        }
+
+        [Authorize(Roles = "Funcionario,Gestor")]
+        public async Task<IActionResult> ConfirmarReserva(int id) {
+
+            var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+            var veiculo = _context.veiculos.Where(x => x.Id == reserva.VeiculoId).FirstOrDefault();
+            var func = await _userManager.GetUserAsync(User);
+            if (reserva == null)
+                return NotFound();
+            var estado = new Estado()
+            {
+                state = Estado.State.Entrega,
+                NrKilometros = veiculo.nrKm,
+                danos = false,
+                observacoes = "",
+                FuncionarioId = func.Id,
+                ReservaId = reserva.Id
+            };
+            if (reserva != null && veiculo != null && func != null)
+            {
+                List<Estado> states = new List<Estado>();
+                states.Add(estado);
+                reserva.estados = states;
+                reserva.state = Reserva.State.Decorrer;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Funcionario,Gestor")]
+        public async Task<IActionResult> CancelarReserva(int id) {
+
+            var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+            if (reserva != null) {
+                reserva.state = Reserva.State.Cancelada;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+               }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservas/Delete/5

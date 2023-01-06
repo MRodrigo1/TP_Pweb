@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<TP_Pweb.Models.Reserva>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "AsMinhasReservas";
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -37,11 +34,16 @@
                @Html.DisplayFor(modelItem => item.Veiculo.Modelo) [@Html.DisplayFor(modelItem => item.Veiculo.Id)]
             </td>
             <td>
-                <a asp-action="ConfirmarReserva" asp-route-id="@item.Id">Confirmar</a> |
-                <a asp-action="RejeitarReserva" asp-route-id="@item.Id">Rejeitar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    @if(item.state.Equals(Reserva.State.Pendente)) { 
+                        <a asp-action="CancelarReservaCli" asp-route-id="@item.Id">Cancelar Reserva [N/Confirmada]</a>
+                    }else if (item.state.Equals(Reserva.State.Decorrer))
+                    {
+                        <a asp-action="EntregarReservaCli" asp-route-id="@item.Id">Entregar Veiculo</a>
+                    }
+                    | <a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+

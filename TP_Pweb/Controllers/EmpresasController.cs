@@ -98,15 +98,12 @@ namespace TP_Pweb.Controllers
 
             if (emp == null)
                 return NotFound();
-
+           
             emp.ativo = empresa.ativo;
 
             _context.Update(emp);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
-
-            return View(empresa);
-
         }
 
         // GET: Empresas/Create
