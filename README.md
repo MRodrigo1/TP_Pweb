@@ -7,24 +7,24 @@
 - [x] Ativar ou inativar empresas
 
 ### Gestão de categorias de veículos
-- [ ] Listar
-- [ ] Criar
-- [ ] Editar
-- [ ] Apagar registos
+- [x] Listar
+- [x] Criar
+- [x] Editar
+- [x] Apagar registos
 
 ### Gestão de utilizadores
 - [x] Listar
-- [x] Editar
+- [ ] Editar
 - [x] Ativar ou inativar utilizadores
 
 [Gestor] Área de gestor de uma empresa de aluguer
 ### Gestão de funcionários
-- [ ] Criar registo de utilizadores, com o perfil funcionário, associado à sua empresa
-- [ ] Criar registo de utilizadores, com o perfil gestor, associado à sua empresa
-- [ ] Listar registo de utilizadores
-- [ ] Ativar ou inativar registo de utilizadores
+- [x] Criar registo de utilizadores, com o perfil funcionário, associado à sua empresa
+- [x] Criar registo de utilizadores, com o perfil gestor, associado à sua empresa
+- [x] Listar registo de utilizadores
+- [x] Ativar ou inativar registo de utilizadores
 - [ ] Apagar registo de utilizador (caso não esteja associado a nenhuma reserva)
-- [ ] Não pode apagar nem desativar o seu próprio registo de utilizador
+- [x] Não pode apagar nem desativar o seu próprio registo de utilizador
 
 ### Gestão de reservas
 - [ ] Igual ao perfil Funcionário
@@ -35,17 +35,17 @@
 [Funcionário] Área de funcionário de uma empresa de aluguer
 ### Gerir a frota de veículos da empresa
 
-- [ ] Listar registo de veículos - com filtros (categoria, estado) e com ordenação
-- [ ] Adicionar registo de veículos
-- [ ] Editar registo de veículos
-- [ ] Apagar registo de veículos (apenas se já não existirem reservas desse veículo)
-- [ ] Ativar ou inativar registo de veículos
+- [x] Listar registo de veículos - com filtros (categoria, estado) e com ordenação
+- [x] Adicionar registo de veículos
+- [x] Editar registo de veículos
+- [x] Apagar registo de veículos (apenas se já não existirem reservas desse veículo)
+- [x] Ativar ou inativar registo de veículos
 
 ### Gerir as reservas da empresa
 
-- [ ] Listar reservas - com filtros (data de levantamento, data entrega, categoria, veículo, cliente)
-- [ ] Confirmar uma reserva
-- [ ] Rejeitar uma reserva
+- [1/2] Listar reservas - com filtros (data de levantamento, data entrega, categoria, veículo, cliente)
+- [x] Confirmar uma reserva
+- [x] Rejeitar uma reserva
 - [ ] Entregar um veículo ao cliente (levantamento do veículo pelo cliente) 
 - [ ] Receber um veículo do cliente (entrega do veículo pelo cliente)
 _Assinalar o estado em que o veículo é entregue/levantado ao/pelo cliente_
@@ -54,7 +54,7 @@ _Assinalar o estado em que o veículo é entregue/levantado ao/pelo cliente_
 [Cliente] Área de clientes
 - [x] Efectuar uma pesquisa (similar ao utilizador anónimo)
 - [x] Efectuar a reserva de um veículo
-- [ ] Consultar o histórico de reservas
+- [x] Consultar o histórico de reservas
 - [ ] Consultar os detalhes de uma reserva
 
 [Utilizador Anónimo] Área de acesso livre
