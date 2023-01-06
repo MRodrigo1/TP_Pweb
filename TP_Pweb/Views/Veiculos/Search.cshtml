@@ -3,14 +3,39 @@
 @{
 }
 
-<h1>Os Nossos Veiculos</h1>
+@*<h1>Os Nossos Veiculos</h1>*@
 
 @if (!string.IsNullOrWhiteSpace(Model.LocalizacaoPesquisa))
 {
-    <p>Resultado da pesquisa por "@Model.LocalizacaoPesquisa":</p>
+
+    <div class="card text-dark border-warning mb-4 rounded-3 shadow-sm h-30">
+        <div class="card-header">
+            <h1>Os Nossos Veiculos</h1>
+            </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="card-title"> @Model.LocalizacaoPesquisa<small class="text-muted fw-light"></small></h2>
+                        <p class="card-text"> @Html.DisplayFor(model=>Model.DataInicialPesquisa) </p>
+                    </div>
+                    <div class="col align-self-center">
+                        <i class="bi bi-caret-right-fill" style="font-size: 25px"></i>
+                    </div>
+                    <div class="col">
+                        <h2 class="card-title"> @Model.LocalizacaoPesquisa<small class="text-muted fw-light"></small></h2>
+                        <p class="card-text"> @Html.DisplayFor(model=>Model.DataFinalPesquisa)  </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+
+
+    @*<p>Resultado da pesquisa por "@Model.LocalizacaoPesquisa":</p>
 
     <label name="DataInicialPesquisa">Disponivel de @Html.DisplayFor(model=>Model.DataInicialPesquisa)</label>
-    <label name="DataFinalPesquisa"> a @Html.DisplayFor(model=>Model.DataFinalPesquisa)</label>
+    <label name="DataFinalPesquisa"> a @Html.DisplayFor(model=>Model.DataFinalPesquisa)</label>*@
 
     @if (Model.NumResultados == 0)
     {
@@ -19,13 +44,67 @@
             encontrar Veiculos com os dados introduzidos.
             Por favor, reveja a sua pesquisa
         </p>
-    }else{
-    <p>Existe(m) @Model.NumResultados Veiculo(s) disponíveis</p>
+    }
+    else
+    {
+        <p>Existe(m) @Model.NumResultados Veiculo(s) disponíveis</p>
+
+        <hr />
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+            @foreach (Veiculo v in Model.ListaDeVeiculos)
+            {
+                <div class="row w-40">
+                    <div class="col">
+                    <div class="card text-dark border-warning mb-4 rounded-3 shadow-sm h-70" >
+                        <div class="card-header py-3">
+                            <h4 class="my-0 fw-normal">
+                                @* Replace e case sensitive
+                    texto pesquisado em negrito: @Html.Raw(c.Nome.ToLower().Replace(Model.textoApesquisar,"<b>"+Model.textoApesquisar+"</b>"))*@
+                                @Html.DisplayFor(model=>v.Modelo)
+                                
+                            </h4>
+                        </div>
+
+
+                            <div class="card-body">
+
+                                @if (v.FotoDisplay != null)
+                                {
+                                    @*<img class="img-thumbnail"
+                    style="max-width:500px ; max-height:500px"
+                    src="data:image/*;base64,@(Convert.ToBase64String(v.FotoDisplay))">*@
+
+                                    <img src="data:image/*;base64,@(Convert.ToBase64String(v.FotoDisplay))" class="card-img-top" alt="cardImg" height="300">
+                                }
+                                else
+                                {
+                                    @*<img class="img-thumbnail"
+                    style="max-width:500px ; max-height:500px"
+                    src="~/img/defaultcar.jpg" )">*@
+
+                                    <img src="~/img/defaultcar.jpg" class="card-img-top" alt="cardImg" height="300">
+                                }
+
+
+                            <h1 class="card-title pricing-card-title">€ @v.CustoDia<small class="text-muted fw-light"></small></h1>
+
+
+                            <p class="card-text"> @Html.DisplayFor(model=>v.empresa.avaliacao)/5 </p>
+
+                            <a class="btn border-dark" asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id">Detalhes</a>
+                            @*<a asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" class="w-100 btn btn-lg btn-outline-primary">Consultar</a>*@
+                        </div>
+                    </div>
+                </div>
+                </div>
+            }
+        </div>
+    }
 }
-    @foreach (Veiculo v in Model.ListaDeVeiculos)
+@*@foreach (Veiculo v in Model.ListaDeVeiculos)
     {
         <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card mb-4 rounded-3 shadow-sm" style="width: 25rem;">
                 <div class="card-header py-3"  >
                         <h4 class="my-0 fw-normal">
                             @Html.DisplayFor(model=>v.Modelo)
@@ -63,4 +142,4 @@
             encontrar Veiculos com os dados introduzidos.
             Por favor, reveja a sua pesquisa
         </p>
-    }
+    }*@
