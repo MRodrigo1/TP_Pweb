@@ -34,12 +34,19 @@
                @Html.DisplayFor(modelItem => item.Veiculo.Modelo) [@Html.DisplayFor(modelItem => item.Veiculo.Id)]
             </td>
             <td>
-                    @if(item.state.Equals(Reserva.State.Pendente)) { 
+                    @if (item.state.Equals(Reserva.State.Pendente))
+                    {
                         <a asp-action="CancelarReservaCli" asp-route-id="@item.Id">Cancelar Reserva [N/Confirmada]</a>
-                    }else if (item.state.Equals(Reserva.State.Decorrer))
+                    }
+                    else if (item.state.Equals(Reserva.State.Decorrer))
                     {
                         <a asp-action="EntregarReservaCli" asp-route-id="@item.Id">Entregar Veiculo</a>
                     }
+                    else if (item.state.Equals(Reserva.State.Concluida))
+                    {
+                        <a asp-action="#" asp-route-id="@item.Id">Classificar</a>
+                    }
+
                     | <a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>

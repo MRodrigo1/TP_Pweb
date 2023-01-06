@@ -79,6 +79,49 @@ namespace TP_Pweb.Controllers
             return new List<string>(await _userManager.GetRolesAsync(user));
         }
 
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            if (id == null || _userManager.Users == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Edit(string id, [Bind("Id,PrimeiroNome,UltimoNome,DataNascimento,NIF,PhoneNumber")] Utilizador utilizador)
+        {
+            var utilizadoreditado = await _context.Users.Where(c => c.Id == id).FirstAsync();
+            if (id != utilizador.Id)
+            {
+                return NotFound();
+            }
+            ModelState.Remove(nameof(utilizador.Empresa));
+            utilizadoreditado.PrimeiroNome = utilizador.PrimeiroNome;
+            utilizadoreditado.UltimoNome = utilizador.UltimoNome;
+            utilizadoreditado.DataNascimento = utilizador.DataNascimento;
+            utilizadoreditado.NIF = utilizador.NIF;
+            utilizadoreditado.PhoneNumber = utilizador.PhoneNumber;
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(utilizadoreditado);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(utilizador);
+        }
+
         [Authorize(Roles = "Gestor, Administrador")]
         public async Task<IActionResult> AtivaRegistos(string userId)
         {

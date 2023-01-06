@@ -27,6 +27,7 @@ namespace TP_Pweb.Controllers
         [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Index()
         {
+            //.Include(r => r.estados)
             var reservas = await _context.reservas.Include(r => r.Utilizador).Include(r => r.Veiculo).ToListAsync();
             var user = await _userManager.GetUserAsync(User);
             var veiculo = await _context.veiculos.Where(v => v.EmpresaId == user.EmpresaId).ToListAsync();
@@ -66,6 +67,13 @@ namespace TP_Pweb.Controllers
         }
 
         public async Task<IActionResult> EntregarReservaCli(int id) {
+            var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+            if (reserva != null && reserva.state.Equals(Reserva.State.Decorrer))
+            {
+                reserva.state = Reserva.State.Entregue;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(AsMinhasReservas));
         }
 
@@ -80,6 +88,7 @@ namespace TP_Pweb.Controllers
             var reserva = await _context.reservas
                 .Include(r => r.Utilizador)
                 .Include(r => r.Veiculo)
+                .Include(r => r.estados)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (reserva == null)
             {
@@ -133,7 +142,9 @@ namespace TP_Pweb.Controllers
             reserva.VeiculoId = idcar;
             reserva.UtilizadorId = user.Id;
             reserva.state = Reserva.State.Pendente;
+            var veiculo = await _context.veiculos.Where(v => v.Id == idcar).FirstAsync();
 
+            reserva.preco = calcularPreco(reserva.DataEntrega,reserva.DataRecolha, veiculo.CustoDia);
             // verifica se a data é válida
             //TODO Melhorar função IsValidDate(reserva)
 
@@ -145,6 +156,9 @@ namespace TP_Pweb.Controllers
             return View();
         }
 
+        private int calcularPreco(DateTime di, DateTime df,int custodia) {
+            return 1;
+        }
         private bool IsValidDate(Reserva booking) {
 
             var reservas = _context.reservas.Where(r => r.VeiculoId == booking.VeiculoId);
@@ -235,6 +249,10 @@ namespace TP_Pweb.Controllers
                 FuncionarioId = func.Id,
                 ReservaId = reserva.Id
             };
+            if (!reserva.state.Equals(Reserva.State.Pendente)) {
+                //NOTIFICAR ERRO
+                return RedirectToAction(nameof(Index));
+            }
             if (reserva != null && veiculo != null && func != null)
             {
                 List<Estado> states = new List<Estado>();
@@ -251,13 +269,58 @@ namespace TP_Pweb.Controllers
         public async Task<IActionResult> CancelarReserva(int id) {
 
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+
+
             if (reserva != null) {
+                if (!reserva.state.Equals(Reserva.State.Pendente))
+                {
+                    //NOTIFICAR ERRO
+                    return RedirectToAction(nameof(Index));
+                }
                 reserva.state = Reserva.State.Cancelada;
                 _context.Update(reserva);
                 await _context.SaveChangesAsync();
                }
             return RedirectToAction(nameof(Index));
         }
+
+        [Authorize(Roles = "Funcionario,Gestor")]
+        public async Task<IActionResult> EncerraReserva(int id)
+        {
+
+            var reserva = _context.reservas.Where(x => x.Id == id).Include(x => x.estados).FirstOrDefault();
+            var veiculo = _context.veiculos.Where(x => x.Id == reserva.VeiculoId).FirstOrDefault();
+            var func = await _userManager.GetUserAsync(User);
+            if (reserva == null)
+                return NotFound();
+
+            if (!reserva.state.Equals(Reserva.State.Entregue))
+            {
+                //NOTIFICAR ERRO
+                return RedirectToAction(nameof(Index));
+            }
+            var estado = new Estado()
+            {
+                state = Estado.State.Recolha,
+                NrKilometros = veiculo.nrKm,
+                danos = false,
+                observacoes = "",
+                FuncionarioId = func.Id,
+                ReservaId = reserva.Id
+            };
+            if (reserva != null && veiculo != null && func != null)
+            {
+                List<Estado> estadosatuais = new List<Estado>();
+                estadosatuais.AddRange(reserva.estados);
+                estadosatuais.Add(estado);
+                reserva.estados = estadosatuais;
+                reserva.state = Reserva.State.Concluida;
+                _context.Update(reserva);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
 
         // GET: Reservas/Delete/5
         public async Task<IActionResult> Delete(int? id)

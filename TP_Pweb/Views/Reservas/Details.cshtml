@@ -11,27 +11,88 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.state)
+            Estado Reserva
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.state)
         </dd>
-        </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Utilizador)
+            Cliente
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Utilizador.Id)
+            @Html.DisplayFor(model => model.Utilizador.PrimeiroNome)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Veiculo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Veiculo.Id)
+            @Html.DisplayFor(model => model.Veiculo.Modelo) '@Html.DisplayFor(model => model.Veiculo.Id)'
         </dd>
+
+        @if (Model.state.Equals(Reserva.State.Decorrer))
+        {
+            foreach (var estado in Model.estados)
+            {
+                <dt class = "col-sm-2">
+                    Funcionario Entrega
+                </dt>
+                <dd class = "col-sm-10">   
+                    
+                </dd>
+                <dt class = "col-sm-2">
+                    Km Iniciais
+                </dt>
+                <dd class = "col-sm-10">   
+
+                </dd>
+                <dt class = "col-sm-2">
+                    Observações
+                </dt>
+                <dd class = "col-sm-10">   
+
+                </dd>
+                <dt class = "col-sm-10">   
+                    Danos
+                </dt>
+                <dd class = "col-sm-10">   
+
+                </dd>
+            }
+        }
+        else if (Model.state.Equals(Reserva.State.Concluida))
+        {
+            foreach (var estado in Model.estados)
+            {
+                <dt class = "col-sm-2">
+                    Funcionario Recolha
+                </dt>
+                <dd class = "col-sm-10"> 
+                    
+                </dd>
+                <dt class = "col-sm-2">
+                    Km Finais
+                </dt>
+                <dd class = "col-sm-10">   
+
+                </dd>
+                <dt class = "col-sm-2">
+                    Observações
+                </dt>
+                <dd class = "col-sm-10">   
+                    Danos
+                </dd>
+                <dd class = "col-sm-10">   
+
+                </dd>
+            }
+        }
+        }
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if(User.IsInRole("Cliente")){
+        <a asp-action="AsMinhasReservas">Back to List</a>
+    }else{
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
