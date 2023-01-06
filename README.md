@@ -2,7 +2,7 @@
 ### Gestão de empresas
 - [1/2] Listar registo de empresas - com filtros (nome, estado da subscrição) e com ordenação
 - [x] Adicionar registo de empresas - automaticamente cria um utilizador com perfil gestor, associado à empresa
-- [ ] Editar registo de empresas
+- [x] Editar registo de empresas
 - [x] Apagar registo de empresas (apenas se ainda não existirem veículos)
 - [x] Ativar ou inativar empresas
 
@@ -14,7 +14,7 @@
 
 ### Gestão de utilizadores
 - [x] Listar
-- [ ] Editar
+- [x] Editar
 - [x] Ativar ou inativar utilizadores
 
 [Gestor] Área de gestor de uma empresa de aluguer
@@ -46,8 +46,8 @@
 - [1/2] Listar reservas - com filtros (data de levantamento, data entrega, categoria, veículo, cliente)
 - [x] Confirmar uma reserva
 - [x] Rejeitar uma reserva
-- [ ] Entregar um veículo ao cliente (levantamento do veículo pelo cliente) 
-- [ ] Receber um veículo do cliente (entrega do veículo pelo cliente)
+- [x] Entregar um veículo ao cliente (levantamento do veículo pelo cliente) 
+- [x] Receber um veículo do cliente (entrega do veículo pelo cliente)
 _Assinalar o estado em que o veículo é entregue/levantado ao/pelo cliente_
 
 
