@@ -65,7 +65,8 @@ namespace TP_Pweb.Controllers
             return RedirectToAction(nameof(AsMinhasReservas));
         }
 
-        public async Task<IActionResult> EntregarReservaCli(int id) { 
+        public async Task<IActionResult> EntregarReservaCli(int id) {
+            return RedirectToAction(nameof(AsMinhasReservas));
         }
 
         // GET: Reservas/Details/5
