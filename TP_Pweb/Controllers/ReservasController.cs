@@ -152,7 +152,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar,DateTime di, DateTime df) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
 
@@ -161,6 +161,8 @@ namespace TP_Pweb.Controllers
             ModelState.Remove(nameof(reserva.UtilizadorId));
             ModelState.Remove(nameof(reserva.estados));
             var user = await _userManager.GetUserAsync(User);
+            reserva.DataEntrega = di;
+            reserva.DataRecolha = df;
             reserva.VeiculoId = idcar;
             reserva.UtilizadorId = user.Id;
             reserva.state = Reserva.State.Pendente;
@@ -319,7 +321,7 @@ namespace TP_Pweb.Controllers
                 ReservaId = reserva.Id
             };
             if (!reserva.state.Equals(Reserva.State.Pendente)) {
-                //NOTIFICAR ERRO
+                TempData["Error"] = String.Format("Erro.");
                 return RedirectToAction(nameof(Index));
             }
             if (reserva != null && veiculo != null && func != null)
@@ -342,7 +344,7 @@ namespace TP_Pweb.Controllers
             if (reserva != null) {
                 if (!reserva.state.Equals(Reserva.State.Pendente))
                 {
-                    //NOTIFICAR ERRO
+                    TempData["Error"] = String.Format("Erro.");
                     return RedirectToAction(nameof(Index));
                 }
                 reserva.state = Reserva.State.Cancelada;
@@ -363,7 +365,7 @@ namespace TP_Pweb.Controllers
 
             if (!reserva.state.Equals(Reserva.State.Entregue))
             {
-                //NOTIFICAR ERRO
+                TempData["Error"] = String.Format("Erro.");
                 return RedirectToAction(nameof(Index));
             }
             var estado = new Estado()

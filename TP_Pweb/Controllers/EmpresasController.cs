@@ -266,15 +266,12 @@ namespace TP_Pweb.Controllers
 
             if (empresa != null && VeiculosBool)
             {
-                //Apagar o gestor associado com o id da empresa
-
-                //TODO DESASSOCIAR TODOS OS UTILIZADORES COM O ID DA EMPRESA
                 await deleteUsersAsync(empresa.Id);
                 _context.Empresa.Remove(empresa);
                 await _context.SaveChangesAsync();
-            }
-                //Notificar que nao eliminou
-                
+            }else
+            TempData["Error"] = String.Format("Erro ao eliminar empresa, não deve possuir veiculos.");
+
             return RedirectToAction(nameof(Index));
         }
 

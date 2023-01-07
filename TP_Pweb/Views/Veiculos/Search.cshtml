@@ -90,10 +90,19 @@
 
 
                             <p class="card-text"> @Html.DisplayFor(model=>v.empresa.avaliacao)/5 </p>
-
-                            <a class="btn border-dark" asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id">Detalhes</a>
-                            @*<a asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" class="w-100 btn btn-lg btn-outline-primary">Consultar</a>*@
-                        </div>
+@using (Html.BeginForm("RealizaReserva", "Veiculos", FormMethod.Get))
+{
+    <input type="text" name="idcar" value="@v.Id" hidden/>
+    <input type="date" name="di" value="@Model.DataInicialPesquisa.ToString("yyyy-MM-dd")" hidden required
+		oninvalid="this.setCustomValidity('Por Favor insira uma data de começo')" 
+		oninput="setCustomValidity('')" />  
+    <input type="date" name="df" value="@Model.DataFinalPesquisa.ToString("yyyy-MM-dd")"hidden required
+		oninvalid="this.setCustomValidity('Por Favor insira uma data de fim')" 
+		oninput="setCustomValidity('')"  />
+    <input type="submit" value="dddd" />
+    }
+@*                            <a class="btn border-dark" asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" asp-route-Di="@Model.DataInicialPesquisa" asp-route-Df="@Model.DataFinalPesquisa">Detalhes</a>
+*@                        </div>
                     </div>
                 </div>
                 </div>

@@ -117,10 +117,17 @@ namespace TP_Pweb.Areas.Identity.Pages.Account
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var user = _context.Users.Where(u => u.Email == Input.Email).FirstOrDefault();
                 var empresa = _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefault();
-                if (user != null && empresa!=null)
+                if (user != null)
                 {
-                    if (user.ativo == false || empresa.ativo == false)
+                    if (user.ativo == false)
                     {
+                        _logger.LogWarning("Blocked Account.");
+                        return RedirectToPage("./Lockout");
+                    }
+                }
+
+                if (empresa != null) {
+                    if (empresa.ativo == false) {
                         _logger.LogWarning("Blocked Account.");
                         return RedirectToPage("./Lockout");
                     }

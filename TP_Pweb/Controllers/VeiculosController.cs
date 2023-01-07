@@ -67,9 +67,10 @@ namespace TP_Pweb.Controllers
             return View(veiculo);
         }
 
-        public async Task<IActionResult> RealizaReserva(int? id)
+        public async Task<IActionResult> RealizaReserva(int idcar, DateTime di, DateTime df)
         {
-            if (id == null || _context.veiculos == null)
+            CreateReservaInicial cri = new CreateReservaInicial();
+            if (idcar == null || _context.veiculos == null)
             {
                 return NotFound();
             }
@@ -77,18 +78,21 @@ namespace TP_Pweb.Controllers
             var veiculo = await _context.veiculos
                 .Include(v => v.categoria)
                 .Include(v => v.empresa)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == idcar);
             if (veiculo == null)
             {
                 return NotFound();
             }
-
-            return View(veiculo);
+            cri.Veiculoid = idcar;
+            cri.di = di;
+            cri.df = df;    
+            
+            return View(cri);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RealizaReserva(int id,[Bind("UtilizadorId,VeiculoId,DataInicialPesquisa,DataFinalPesquisa")] Veiculo veiculo)
+        public async Task<IActionResult> RealizaReserva(int id, [Bind("UtilizadorId,VeiculoId,DataInicialPesquisa,DataFinalPesquisa")] Veiculo veiculo)
         {
             veiculo = (Veiculo)_context.veiculos.Where(v => v.Id == id);
             return View(veiculo);
@@ -257,7 +261,7 @@ namespace TP_Pweb.Controllers
                     else
                     {
                         TempData["Error"] = String.Format("Imagem demasiado Grande.");
-                        return RedirectToAction(); //TODO VERIFICAR O TAMANHO DA IMAGEM
+                        return RedirectToAction();
                     }
                 }
                 try
@@ -336,22 +340,20 @@ namespace TP_Pweb.Controllers
             Boolean isReservado = true;
             foreach (var reserva in reservas)
             {
-                if (reserva.VeiculoId == id)
+                if (reserva.VeiculoId == id && !reserva.state.Equals(Reserva.State.Concluida))
                     isReservado = false;
             }
 
             if (veiculo != null && isReservado)
             {
                 _context.veiculos.Remove(veiculo);
-            }
-            
+            }else
+                TempData["Error"] = String.Format("Erro ao eliminar veiculo, não deve reservas.");
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-
-
-       
 
         private bool VeiculoExists(int id)
         {
@@ -360,9 +362,15 @@ namespace TP_Pweb.Controllers
 
         public async Task<IActionResult> Search(string LocalizacaoPesquisa,string CategoriaPesquisa, DateTime DataInicialPesquisa, DateTime DataFinalPesquisa)
         {
+            if (DataInicialPesquisa > DataFinalPesquisa)
+            {
+                TempData["Error"] = String.Format("Data de inicio deve ser menor.");
+                return RedirectToAction("Index", "Home");
+            }
+
             PesquisaVeiculoViewModel pesquisaVeiculo = new PesquisaVeiculoViewModel();
             
-                pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Include("empresa").Include("categoria").Where(
+               var veiculostodos = await _context.veiculos.Include("empresa").Include("categoria").Where(
                         v => v.Localizacao.Contains(LocalizacaoPesquisa) &&
                         v.categoria.Nome.Equals(CategoriaPesquisa)
                         ).ToListAsync();
@@ -373,26 +381,28 @@ namespace TP_Pweb.Controllers
 
             //Verificar data nas reservas
             var reservas = _context.reservas.ToList();
-
-            //foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos)
-            //{
-            //    foreach (Reserva r in reservas)
-            //    {
-            //        if (v.Id == r.VeiculoId)
-            //        {
-            //            if (DataInicialPesquisa < r.DataEntrega && DataFinalPesquisa < r.DataEntrega)
-            //            {
-            //                pesquisaVeiculo.ListaDeVeiculos.Remove(v);
-            //            }
-            //            else if (DataInicialPesquisa > r.DataRecolha && DataFinalPesquisa > r.DataRecolha)
-            //            {
-            //                pesquisaVeiculo.ListaDeVeiculos.Remove(v);
-            //            }
-            //            //ADICIONAR NA LISTA NOVA   
-            //        }
-            //    }
-            //}
-
+            var veiculosDisponiveis = new List<Veiculo>();
+            foreach (Veiculo v in veiculostodos)
+            {
+                bool valido = true;
+                foreach (Reserva r in reservas)
+                {
+                    if (v.Id == r.VeiculoId && !r.state.Equals(Reserva.State.Cancelada) && !r.state.Equals(Reserva.State.Concluida) && !r.state.Equals(Reserva.State.Pendente))
+                    {
+                        if (DataInicialPesquisa < r.DataEntrega && DataFinalPesquisa < r.DataEntrega ||
+                            DataInicialPesquisa > r.DataRecolha && DataFinalPesquisa > r.DataRecolha)
+                        {
+                        }
+                        else
+                        {
+                            valido = false;
+                        }
+                    }
+                }
+                    if(valido)
+                        veiculosDisponiveis.Add(v);
+            }
+            pesquisaVeiculo.ListaDeVeiculos = veiculosDisponiveis;
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
             return View(pesquisaVeiculo);
 
@@ -400,42 +410,47 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa,CategoriaPesquisa,DataInicialPesquisa,DataFinalPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo) {
+        public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa,CategoriaPesquisa,DataInicialPesquisa,DataFinalPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo)
+        {
 
-            pesquisaVeiculo.ListaDeVeiculos = await _context.veiculos.Include("empresa").Include("categoria").Where(
+            if (pesquisaVeiculo.DataInicialPesquisa > pesquisaVeiculo.DataFinalPesquisa) {
+                TempData["Error"] = String.Format("Data de inicio deve ser menor.");
+                return RedirectToAction("Index", "Home"); }
+                
+
+                    var veiculostodos = await _context.veiculos.Include("empresa").Include("categoria").Where(
                     v => v.Localizacao.Contains(pesquisaVeiculo.LocalizacaoPesquisa) &&
                     v.categoria.Equals(pesquisaVeiculo.CategoriaPesquisa)
                     ).ToListAsync();
 
-            //pesquisaVeiculo.LocalizacaoPesquisa = pesquisaVeiculo.LocalizacaoPesquisa;
-            //pesquisaVeiculo.CategoriaPesquisa = pesquisaVeiculo.CategoriaPesquisa;
-            //Verificar data nas reservas
             var reservas = _context.reservas.ToList();
-            foreach (Veiculo v in pesquisaVeiculo.ListaDeVeiculos)
+            var veiculosDisponiveis = new List<Veiculo>();
+            foreach (Veiculo v in veiculostodos)
             {
+                bool valido = true;
                 foreach (Reserva r in reservas)
                 {
                     if (v.Id == r.VeiculoId)
                     {
-                        if (pesquisaVeiculo.DataInicialPesquisa < r.DataEntrega && pesquisaVeiculo.DataFinalPesquisa < r.DataEntrega)
+                        if (pesquisaVeiculo.DataInicialPesquisa < r.DataEntrega && pesquisaVeiculo.DataFinalPesquisa < r.DataEntrega ||
+                            pesquisaVeiculo.DataInicialPesquisa > r.DataRecolha && pesquisaVeiculo.DataFinalPesquisa > r.DataRecolha)
                         {
-                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
                         }
-                        else if (pesquisaVeiculo.DataInicialPesquisa > r.DataRecolha && pesquisaVeiculo.DataFinalPesquisa > r.DataRecolha)
+                        else
                         {
-                            pesquisaVeiculo.ListaDeVeiculos.Remove(v);
+                            valido = false;
                         }
                     }
                 }
+                if (valido)
+                    veiculosDisponiveis.Add(v);
             }
-            
 
+            pesquisaVeiculo.ListaDeVeiculos = veiculosDisponiveis;
             pesquisaVeiculo.NumResultados = pesquisaVeiculo.ListaDeVeiculos.Count();
-
-
             return View(pesquisaVeiculo);
         }
-            bool isValidFileType(string fileName)
+        bool isValidFileType(string fileName)
             {
                 if (fileName.EndsWith(".png") || fileName.EndsWith(".jpg") || fileName.EndsWith(".jpeg"))
                 {
