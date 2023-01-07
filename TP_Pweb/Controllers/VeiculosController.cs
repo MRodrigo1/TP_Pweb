@@ -64,6 +64,22 @@ namespace TP_Pweb.Controllers
                 return NotFound();
             }
 
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/VeiculosPhotos");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string VeiculoPath = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\VeiculosPhotos\\" + id.ToString());
+
+            if (!Directory.Exists(VeiculoPath))
+                Directory.CreateDirectory(VeiculoPath);
+
+            var files = from file in Directory.EnumerateFiles(VeiculoPath)
+                        select string.Format("/VeiculosPhotos/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheiros"] = files;
+            ViewBag.ficheiros = files;
+
             return View(veiculo);
         }
 

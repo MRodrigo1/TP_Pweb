@@ -117,6 +117,39 @@ namespace TP_Pweb.Controllers
                 return NotFound();
             }
 
+            string pathEntrega = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotosEntrega");
+            if (!Directory.Exists(pathEntrega))
+                Directory.CreateDirectory(pathEntrega);
+
+            string DanosPathEntrega = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\DanosPhotosEntrega\\" + id.ToString());
+
+            if (!Directory.Exists(DanosPathEntrega))
+                Directory.CreateDirectory(DanosPathEntrega);
+
+            var filesEntrega = from file in Directory.EnumerateFiles(DanosPathEntrega)
+                        select string.Format("/DanosPhotosEntrega/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheirosEntrega"] = filesEntrega;
+            ViewBag.ficheirosEntrega = filesEntrega;
+
+            string pathRecolha = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotosRecolha");
+            if (!Directory.Exists(pathRecolha))
+                Directory.CreateDirectory(pathRecolha);
+
+            string DanosPathRecolha = Path.Combine(Directory.GetCurrentDirectory(),
+                   "wwwroot\\DanosPhotosRecolha\\" + id.ToString());
+
+            if (!Directory.Exists(DanosPathRecolha))
+                Directory.CreateDirectory(DanosPathRecolha);
+
+            var filesRecolha = from file in Directory.EnumerateFiles(DanosPathRecolha)
+                        select string.Format("/DanosPhotosRecolha/{0}/{1}", id, Path.GetFileName(file));
+
+            ViewData["ficheirosRecolha"] = filesRecolha;
+            ViewBag.ficheirosRecolha = filesRecolha;
+
+
             return View(reserva);
         }
 
@@ -186,34 +219,88 @@ namespace TP_Pweb.Controllers
         }
             [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessaEstado(int id, [Bind("NrKilometros,danos,observacoes")] Estado estado)
+        public async Task<IActionResult> ProcessaEstado(int id, [Bind("NrKilometros,danos,observacoes")] Estado estado, [FromForm] List<IFormFile> fotosdanos)
         {
             if (id == null || _context.reservas == null)
             {
                 return NotFound();
             }
 
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotos");
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            string VeiculoPath = Path.Combine(Directory.GetCurrentDirectory(),
-                   "wwwroot\\DanosPhotos\\" + id.ToString());
-
-            if (!Directory.Exists(VeiculoPath))
-                Directory.CreateDirectory(VeiculoPath);
-
-            var files = from file in Directory.EnumerateFiles(VeiculoPath)
-                        select string.Format("/DanosPhotos/{0}/{1}", id, Path.GetFileName(file));
-
-            ViewData["ficheiros"] = files;
-            ViewBag.ficheiros = files;
-
             var reserva = await _context.reservas.Where(r => r.Id == id).FirstAsync();
-            if(reserva.state.Equals(Reserva.State.Pendente))
+            if (reserva.state.Equals(Reserva.State.Pendente))
+            {
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotosEntrega");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                string danospath = Path.Combine(Directory.GetCurrentDirectory(),
+                       "wwwroot\\DanosPhotosEntrega\\" + id.ToString());
+
+                if (!Directory.Exists(danospath))
+                    Directory.CreateDirectory(danospath);
+
+                var files = from file in Directory.EnumerateFiles(danospath)
+                            select string.Format("/DanosPhotosEntrega/{0}/{1}", id, Path.GetFileName(file));
+
+                ViewData["ficheiros"] = files;
+                ViewBag.ficheiros = files;
+
+                foreach (var formFile in fotosdanos)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        var filePath = Path.Combine(danospath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+
+                        while (System.IO.File.Exists(filePath))
+                        {
+                            filePath = Path.Combine(danospath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+                        }
+
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            await formFile.CopyToAsync(stream);
+                        }
+                    }
+                }
                 await ConfirmarReserva(id, estado.danos, estado.observacoes, estado.NrKilometros);
-            else if(reserva.state.Equals(Reserva.State.Entregue))
+            }
+            else if (reserva.state.Equals(Reserva.State.Entregue))
+            {
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/DanosPhotosRecolha");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                string danospath = Path.Combine(Directory.GetCurrentDirectory(),
+                       "wwwroot\\DanosPhotosRecolha\\" + id.ToString());
+
+                if (!Directory.Exists(danospath))
+                    Directory.CreateDirectory(danospath);
+
+                var files = from file in Directory.EnumerateFiles(danospath)
+                            select string.Format("/DanosPhotosRecolha/{0}/{1}", id, Path.GetFileName(file));
+
+                ViewData["ficheiros"] = files;
+                ViewBag.ficheiros = files;
+
+                foreach (var formFile in fotosdanos)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        var filePath = Path.Combine(danospath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+
+                        while (System.IO.File.Exists(filePath))
+                        {
+                            filePath = Path.Combine(danospath, Guid.NewGuid().ToString() + Path.GetExtension(formFile.FileName));
+                        }
+
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            await formFile.CopyToAsync(stream);
+                        }
+                    }
+                }
                 await EncerraReserva(id, estado.danos, estado.observacoes, estado.NrKilometros);
+            }
 
             return RedirectToAction(nameof(Index));
         }

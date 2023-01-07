@@ -66,6 +66,7 @@
                 <dd class="col-sm-10">
                     @Html.DisplayFor(model => model.preco)
                 </dd>
+
             }
         }
         else if (Model.state.Equals(Reserva.State.Concluida))
@@ -102,6 +103,44 @@
             }
         }
         }
+
+        <p>Galeria danos Entrega</p>
+            <div class="row d-flex">
+
+                @if (ViewBag.ficheirosEntrega == null)
+                {
+                    <p>Nehuma imagem inserida</p>
+                }
+                else
+                @foreach (var file in ViewBag.ficheirosEntrega)
+                {
+                    <div class="col p-2 m-2"
+                    style="border-radius:10px; border:1px dotted #ccc;">
+
+                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                    </div>
+
+                }
+            </div>
+
+            <p>Galeria danos Recolha</p>
+            <div class="row d-flex">
+
+                @if (ViewBag.ficheirosRecolha == null)
+                {
+                    <p>Nehuma imagem inserida</p>
+                }
+                else
+                @foreach (var file in ViewBag.ficheirosRecolha)
+                {
+                    <div class="col p-2 m-2"
+                    style="border-radius:10px; border:1px dotted #ccc;">
+
+                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                    </div>
+
+                }
+            </div>
     </dl>
 </div>
 <div>

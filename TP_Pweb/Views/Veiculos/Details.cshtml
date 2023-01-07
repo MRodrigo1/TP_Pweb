@@ -64,7 +64,26 @@
         </dd>
     </dl>
 </div>
+<p>Galeria de Imagens</p>
+            <div class="row d-flex">
+
+                @if (ViewBag.ficheiros == null)
+                {
+                    <p>Nehuma imagem inserida</p>
+                }
+                else
+                @foreach (var file in ViewBag.ficheiros)
+                {
+                    <div class="col p-2 m-2"
+                    style="border-radius:10px; border:1px dotted #ccc;">
+
+                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                    </div>
+
+                }
+            </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
