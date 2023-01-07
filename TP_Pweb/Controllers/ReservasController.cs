@@ -54,6 +54,7 @@ namespace TP_Pweb.Controllers
             return View(ListaReservas);
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CancelarReservaCli(int id)
         {
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
@@ -66,6 +67,7 @@ namespace TP_Pweb.Controllers
             return RedirectToAction(nameof(AsMinhasReservas));
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> EntregarReservaCli(int id) {
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
             if (reserva != null && reserva.state.Equals(Reserva.State.Decorrer))
@@ -76,12 +78,14 @@ namespace TP_Pweb.Controllers
             }
             return RedirectToAction(nameof(AsMinhasReservas));
         }
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> ClassificaEmpresa(int id) {
             var reserva = await _context.reservas.Where(x => x.Id == id).FirstAsync();
             return View(reserva);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> ClassificaEmpresa(int id, int classifica) {
             var reserva = await _context.reservas.Where(x => x.Id == id).FirstAsync();
             var veiculo = await _context.veiculos.Where(v => v.Id == reserva.VeiculoId).FirstAsync();
@@ -100,6 +104,7 @@ namespace TP_Pweb.Controllers
 
 
         // GET: Reservas/Details/5
+        [Authorize(Roles = "Cliente,Funcionario,Gestor")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.reservas == null)
@@ -185,6 +190,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar,DateTime di, DateTime df,int preco) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
@@ -209,16 +215,18 @@ namespace TP_Pweb.Controllers
             if (ModelState.IsValid) {
                 _context.Add(reserva);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("AsMinhasReservas", "Reservas");
             }
             return View();
         }
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> ProcessaEstado(int id)
         {
             return View();
         }
-            [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> ProcessaEstado(int id, [Bind("NrKilometros,danos,observacoes")] Estado estado, [FromForm] List<IFormFile> fotosdanos)
         {
             if (id == null || _context.reservas == null)
@@ -467,6 +475,7 @@ namespace TP_Pweb.Controllers
 
 
         // GET: Reservas/Delete/5
+        [Authorize(Roles = "Ãdministrador")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.reservas == null)

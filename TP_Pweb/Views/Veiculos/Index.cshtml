@@ -13,25 +13,25 @@
 <p>
     <a asp-action="Create">Adicionar Veiculo</a>
 </p>
-<table class="table" data-toggle="table" data-search="true">
+<table data-toggle="table" data-search="true">
     <thead>
         <tr>
-            <th data-sortable="false" data-searchable="false" >
+            <th data-sortable="false" data-searchable="false">
                 @Html.DisplayNameFor(model => model.FotoDisplay)
             </th>
             <th data-sortable="true" data-searchable="true">
                 @Html.DisplayNameFor(model => model.Localizacao)
             </th>
-            <th data-sortable="false" data-searchable="false">
+            <th data-sortable="false" data-searchable="false" >
                 @Html.DisplayNameFor(model => model.CustoDia)
             </th>
-            <th data-sortable="true" data-searchable="false">
+            <th data-sortable="true" data-searchable="false"><i class="bi bi-filter-left">
                 @Html.DisplayNameFor(model => model.nrKm)
             </th>
             <th data-sortable="false" data-searchable="false">
                 @Html.DisplayNameFor(model => model.empresa)
             </th>
-            <th data-sortable="false" data-searchable="false">
+            <th data-sortable="true" data-searchable="true"><i class="bi bi-filter-left">
                 @Html.DisplayNameFor(model => model.categoria)
             </th>
             <th></th>

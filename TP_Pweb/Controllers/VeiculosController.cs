@@ -40,7 +40,8 @@ namespace TP_Pweb.Controllers
 
             return View(veiculosSel);
         }
-        [Authorize(Roles = "Cliente")]
+        
+        [AllowAnonymous]
         public async Task<IActionResult> AllVeiculos()
         {
             var veiculos = await _context.veiculos.Include(v => v.categoria).Include(v => v.empresa).ToListAsync();
@@ -83,6 +84,7 @@ namespace TP_Pweb.Controllers
             return View(veiculo);
         }
 
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> RealizaReserva(int idcar, DateTime di, DateTime df)
         {
             CreateReservaInicial cri = new CreateReservaInicial();
@@ -122,6 +124,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> RealizaReserva(int id, [Bind("UtilizadorId,VeiculoId,DataInicialPesquisa,DataFinalPesquisa")] Veiculo veiculo)
         {
             veiculo = (Veiculo)_context.veiculos.Where(v => v.Id == id);
@@ -160,8 +163,9 @@ namespace TP_Pweb.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             var empresa = await _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefaultAsync();
+
             if(empresa != null) {
-                ViewBag.EmpresaNome = empresa.Nome;
+                ViewData["EmpresaNome"] = new SelectList(_context.Empresa.Where(e => e.Nome == empresa.Nome), "Id", "Nome");
             }
             veiculo.EmpresaId = user.EmpresaId;
             //TODO Remove empresa e categoria, verificação
@@ -203,6 +207,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Veiculos/Edit/5
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Edit(int? id)
         {
             ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
@@ -244,6 +249,7 @@ namespace TP_Pweb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId")] Veiculo veiculo, IFormFile FotoVeiculo, [FromForm] List<IFormFile> fotosVeiculos)
         {
             ViewData["CategoriaId"] = new SelectList(_context.categorias, "Id", "Nome");
@@ -335,6 +341,7 @@ namespace TP_Pweb.Controllers
         }
 
         // GET: Veiculos/Delete/5
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.veiculos == null)
@@ -357,6 +364,7 @@ namespace TP_Pweb.Controllers
         // POST: Veiculos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.veiculos == null)
@@ -390,6 +398,7 @@ namespace TP_Pweb.Controllers
           return _context.veiculos.Any(e => e.Id == id);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Search(string LocalizacaoPesquisa,string CategoriaPesquisa, DateTime DataInicialPesquisa, DateTime DataFinalPesquisa)
         {
             if (DataInicialPesquisa > DataFinalPesquisa)
@@ -429,7 +438,7 @@ namespace TP_Pweb.Controllers
                         }
                     }
                 }
-                    if(valido)
+                    if(valido && v.ativo == true)
                         veiculosDisponiveis.Add(v);
             }
             pesquisaVeiculo.ListaDeVeiculos = veiculosDisponiveis;
@@ -440,6 +449,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Search([Bind("LocalizacaoPesquisa,CategoriaPesquisa,DataInicialPesquisa,DataFinalPesquisa")] PesquisaVeiculoViewModel pesquisaVeiculo)
         {
 
@@ -490,7 +500,7 @@ namespace TP_Pweb.Controllers
                     return false;
             }
 
-        [Authorize(Roles = "Administrador,Funcionario,Gestor")]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> AtivaDesativaVeiculos(int? id)
         {
             if (id == null || _context.veiculos == null)
@@ -508,7 +518,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador,Funcionario,Gestor")]
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> AtivaDesativaVeiculos(int id, [Bind("Id,FotoDisplay,Modelo,Localizacao,CustoDia,nrKm,EmpresaId,CategoriaId,ativo")] Veiculo veiculo)
         {
             if (id == null || _context.veiculos == null)
@@ -535,7 +545,7 @@ namespace TP_Pweb.Controllers
             return RedirectToAction("Index");
 
         }
-
+        [Authorize(Roles = "Funcionario,Gestor")]
         public async Task<IActionResult> deleteImage(int id, string image)
         {
             if (id == null || _context.veiculos == null)

@@ -39,24 +39,16 @@
             <td>
                 @if(item.state.Equals(Reserva.State.Pendente)){
                 <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Confirmar</a>
-                }else if(item.state.Equals(Reserva.State.Pendente)){
                 <a asp-action="CancelarReserva" asp-route-id="@item.Id">Rejeitar</a> 
                 }else if(item.state.Equals(Reserva.State.Entregue)){
                 <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Encerrar</a>
+                }else if (item.state.Equals(Reserva.State.Decorrer)){
+                <a> Waiting... |</a>
                 }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
             </td>
         </tr>
-}       @*Details*@
-        @*@foreach (var item in Model)
-        {
-            foreach(var item2 in item.estados)
-            {
-                @Html.DisplayFor(modelItem => item2.FuncionarioId)
-
-            }      
-
-        }*@
+}
 
     </tbody>
 </table>

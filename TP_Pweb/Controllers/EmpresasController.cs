@@ -61,7 +61,6 @@ namespace TP_Pweb.Controllers
             return View(empresa);
         }
         [Authorize(Roles = "Administrador")]
-
         public async Task<IActionResult> AtivarDesativarEmpresa(int? id)
         {
             if (id == null || _context.Empresa == null)
@@ -274,7 +273,7 @@ namespace TP_Pweb.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+        [Authorize(Roles = "Administrador")]
         private async Task deleteUsersAsync(int id) {
             var users = await _userManager.Users.ToListAsync();
             foreach (var u in users)

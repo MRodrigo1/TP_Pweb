@@ -79,7 +79,7 @@ namespace TP_Pweb.Controllers
             return new List<string>(await _userManager.GetRolesAsync(user));
         }
 
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador,Gestor")]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null || _userManager.Users == null)
@@ -161,7 +161,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Gestor")]
+        [Authorize(Roles = "Gestor,Administrador")]
         public async Task<IActionResult> addGestor([Bind("PrimeiroNome,UltimoNome,DataNascimento,NIF,Email")] Utilizador utilizador)
         {
             ModelState.Remove(nameof(utilizador.Empresa));

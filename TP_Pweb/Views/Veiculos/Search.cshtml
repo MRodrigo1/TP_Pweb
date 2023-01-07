@@ -87,7 +87,7 @@
                             <h1 class="card-title pricing-card-title">€ @v.CustoDia<small class="text-muted fw-light"></small></h1>
 
 
-                            <p class="card-text"> @Html.DisplayFor(model=>v.empresa.avaliacao)/5 </p>
+                            <p class="card-text"> @Html.DisplayFor(model=>v.empresa.avaliacao)/10 <i class="bi bi-star-fill"></i></p> 
 @using (Html.BeginForm("RealizaReserva", "Veiculos", FormMethod.Get))
 {
     <input type="text" name="idcar" value="@v.Id" hidden/>
