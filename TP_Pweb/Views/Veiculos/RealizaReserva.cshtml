@@ -8,15 +8,20 @@
    @using (Html.BeginForm("CreateFromDetails", "Reservas", FormMethod.Post))
     {
     <input type="text" name="idcar" value="@Model.Veiculoid" hidden />
-    <input type="date" name="di" value="@Model.di.ToString("yyyy-MM-dd")" required readonly 
+    <p>Data de Entrega: <input type="date" name="di" value="@Model.di.ToString("yyyy-MM-dd")" required readonly 
 		oninvalid="this.setCustomValidity('Por Favor insira uma data de começo')" 
-		oninput="setCustomValidity('')" />  
-    <input type="date" name="df" value="@Model.df.ToString("yyyy-MM-dd")" required readonly
+		oninput="setCustomValidity('')" />  </p>
+     <p>Data de Recolha: <input type="date" name="df" value="@Model.df.ToString("yyyy-MM-dd")" required readonly
 		oninvalid="this.setCustomValidity('Por Favor insira uma data de fim')" 
-		oninput="setCustomValidity('')" />
-        <p></p>
-        <label>€</label><input type="text" name="preco" value="@Model.preco" readonly/>
+		oninput="setCustomValidity('')" /> </p>
+
+    <div class="form-group pt-4">
+        <p class="alert alert-info">
+            Esta reserva terá um custo de  <b>@Model.preco</b> €
+        </p>
+    </div>
     <input type="submit" value="Reservar" />
+    <pre></pre>
 
 }<div>
     <a asp-action="Index">Back to List</a>

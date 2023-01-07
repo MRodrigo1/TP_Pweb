@@ -3,13 +3,11 @@
 @{
 }
 
-@*<h1>Os Nossos Veiculos</h1>*@
-
 @if (!string.IsNullOrWhiteSpace(Model.LocalizacaoPesquisa))
 {
 
     <div class="card text-dark border-warning mb-4 rounded-3 shadow-sm h-30">
-        <div class="card-header">
+        <div class="card-header" style="background-color: darkkhaki">
             <h1>Os Nossos Veiculos</h1>
             </div>
         <div class="card-body">
@@ -99,7 +97,7 @@
     <input type="date" name="df" value="@Model.DataFinalPesquisa.ToString("yyyy-MM-dd")"hidden required
 		oninvalid="this.setCustomValidity('Por Favor insira uma data de fim')" 
 		oninput="setCustomValidity('')"  />
-    <input type="submit" value="dddd" />
+    <input type="submit" value="Reservar" />
     }
 @*                            <a class="btn border-dark" asp-controller="Veiculos" asp-action="RealizaReserva" asp-route-id="@v.Id" asp-route-Di="@Model.DataInicialPesquisa" asp-route-Df="@Model.DataFinalPesquisa">Detalhes</a>
 *@                        </div>

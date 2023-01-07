@@ -45,3 +45,10 @@ body {
     background-repeat: no-repeat;
     background-position: 50% 50%;
 }
+
+.banner_04 {
+    background-image: url('/img/banner_04.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
