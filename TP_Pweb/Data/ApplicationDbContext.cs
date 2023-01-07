@@ -9,6 +9,7 @@ namespace TP_Pweb.Data
         public DbSet<Veiculo> veiculos { get; set; }
         public DbSet<Categoria> categorias { get; set; }
         public DbSet<Reserva> reservas { get; set; }
+        public DbSet<Estado> estados { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

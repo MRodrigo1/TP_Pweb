@@ -154,7 +154,24 @@ namespace TP_Pweb.Controllers
             ViewData["ficheirosRecolha"] = filesRecolha;
             ViewBag.ficheirosRecolha = filesRecolha;
 
-
+            //Nome dos funcionarios/Getores que aceiaram
+            if (reserva.state.Equals(Reserva.State.Entregue) || reserva.state.Equals(Reserva.State.Decorrer) || reserva.state.Equals(Reserva.State.Concluida) || reserva.state.Equals(Reserva.State.Cancelada)) {
+            var fEntrega = await _context.estados.Where(e => e.ReservaId == id && e.state.Equals(Estado.State.Entrega)).FirstAsync();
+            var funcionarioEntrega = await _context.Users.Where(u => u.Id == fEntrega.FuncionarioId).FirstAsync();
+            if(funcionarioEntrega!=null)
+                ViewBag.funcionarioEntrega = funcionarioEntrega.PrimeiroNome + " " + funcionarioEntrega.UltimoNome;
+            }
+            if (reserva.state.Equals(Reserva.State.Concluida))
+            {
+                var fRecolha = await _context.estados.Where(e => e.ReservaId == id && e.state.Equals(Estado.State.Recolha)).FirstAsync();
+                var funcionarioRecolha = await _context.Users.Where(u => u.Id == fRecolha.FuncionarioId).FirstAsync();
+                if (funcionarioRecolha != null)
+                    ViewBag.funcionarioRecolha = funcionarioRecolha.PrimeiroNome + " " + funcionarioRecolha.UltimoNome;
+            }
+            if (reserva.state.Equals(Reserva.State.Cancelada)) {
+                var fcancelada = await _context.estados.Where(e => e.ReservaId == id && e.state.Equals(Estado.State.Entrega)).FirstAsync();
+                var funcionarioRecolha = await _context.Users.Where(u => u.Id == fcancelada.FuncionarioId).FirstAsync();
+            }
             return View(reserva);
         }
 
@@ -423,6 +440,16 @@ namespace TP_Pweb.Controllers
         public async Task<IActionResult> CancelarReserva(int id) {
 
             var reserva = _context.reservas.Where(x => x.Id == id).FirstOrDefault();
+            var func = await _userManager.GetUserAsync(User);
+            var estado = new Estado()
+            {
+                state = Estado.State.Entrega,
+                NrKilometros = 0,
+                danos = false,
+                observacoes = "",
+                FuncionarioId = func.Id,
+                ReservaId = reserva.Id
+            };
 
             if (reserva != null) {
                 if (!reserva.state.Equals(Reserva.State.Pendente))
@@ -430,10 +457,14 @@ namespace TP_Pweb.Controllers
                     TempData["Error"] = String.Format("Erro.");
                     return RedirectToAction(nameof(Index));
                 }
-                reserva.state = Reserva.State.Cancelada;
-                _context.Update(reserva);
-                await _context.SaveChangesAsync();
-               }
+
+                    List<Estado> states = new List<Estado>();
+                    states.Add(estado);
+                    reserva.estados = states;
+                    reserva.state = Reserva.State.Cancelada;
+                    _context.Update(reserva);
+                    await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

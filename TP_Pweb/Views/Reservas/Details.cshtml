@@ -35,156 +35,184 @@
             @Html.DisplayFor(model => model.preco)
         </dd>
 
+        @if (Model.state.Equals(Reserva.State.Cancelada))
+        {
+            foreach (var estado in Model.estados)
+            {
+                <div>
+                    <dt class = "col-sm-2">
+                        Funcionario Cancelamento
+                    </dt>
+                     <dd class = "col-sm-10">   
+                       @ViewBag.funcionarioEntrega
+                    </dd>
+               </div>
+            }
+        }
+
         @if (Model.state.Equals(Reserva.State.Decorrer) || Model.state.Equals(Reserva.State.Entregue))
         {
+            foreach (var estado in Model.estados)
+            {
+                if(estado.state.Equals(Estado.State.Entrega)){
                 <div>
-                <dt class = "col-sm-2">
-                    Funcionario Entrega
-                </dt>
-                <dd class = "col-sm-10">   
+                    <dt class = "col-sm-2">
+                        Funcionario Entrega
+                    </dt>
+                    <dd class = "col-sm-10">   
+                       @ViewBag.funcionarioEntrega
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Km Iniciais
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.NrKilometros
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Observações
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.observacoes
+                    </dd>
+                    <dt class = "col-sm-2">   
+                        Danos
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @if(estado.danos == true){
+                            <label>Sim</label>
+                        }else{
+                            <label>Nao</label>
+                        }
+                    </dd>
                     
-                </dd>
-                <dt class = "col-sm-2">
-                    Km Iniciais
-                </dt>
-                <dd class = "col-sm-10">   
-
-                </dd>
-                <dt class = "col-sm-2">
-                    Observações
-                </dt>
-                <dd class = "col-sm-10">   
-
-                </dd>
-                <dt class = "col-sm-2">   
-                    Danos
-                </dt>
-                <dd class = "col-sm-10">   
-                    
-                </dd>
-                <dd class="col-sm-10">
-                    
-                </dd>
                 </div>
                 <p>Galeria danos Entrega</p>
-            <div class="row d-flex">
+                <div class="row d-flex">
 
-                @if (ViewBag.ficheirosEntrega == null)
-                {
-                    <p>Nehuma imagem inserida</p>
-                }
-                else
-                @foreach (var file in ViewBag.ficheirosEntrega)
-                {
-                    <div class="col p-2 m-2"
+                    @if (ViewBag.ficheirosEntrega == null)
+                    {
+                        <p>Nehuma imagem inserida</p>
+                    }
+                    else
+                        @foreach (var file in ViewBag.ficheirosEntrega)
+                        {
+                            <div class="col p-2 m-2"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
-                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
-                    </div>
+                                <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                            </div>
 
+                        }
+                </div>
                 }
-            </div>
+            }
         }
-        @if(Model.state.Equals(Reserva.State.Concluida))
+        @if (Model.state.Equals(Reserva.State.Concluida))
         {
-                 <div>
-                <dt class = "col-sm-2">
-                    Funcionario Entrega
-                </dt>
-                <dd class = "col-sm-10">   
-                    
-                </dd>
-                <dt class = "col-sm-2">
-                    Km Iniciais
-                </dt>
-                <dd class = "col-sm-10">   
-
-                </dd>
-                <dt class = "col-sm-2">
-                    Observações
-                </dt>
-                <dd class = "col-sm-10">   
-
-                </dd>
-                <dt class = "col-sm-2">   
-                    Danos
-                </dt>
-                <dd class = "col-sm-10">   
-                    
-                </dd>
-                <dd class="col-sm-10">
-                    
-                </dd>
+            foreach (var estado in Model.estados)
+            {
+                if (estado.state.Equals(Estado.State.Entrega)) {
+                    <div>
+                    <dt class = "col-sm-2">
+                        Funcionario Entrega
+                    </dt>
+                    <dd class = "col-sm-10">   
+                       @ViewBag.funcionarioEntrega
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Km Iniciais
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.NrKilometros
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Observações
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.observacoes
+                    </dd>
+                    <dt class = "col-sm-2">   
+                        Danos
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @if(estado.danos == true){
+                            <label>Sim</label>
+                        }else{
+                            <label>Nao</label>
+                        }
+                    </dd>
                 </div>
-                <p>Galeria danos Entrega</p>
-            <div class="row d-flex">
+                    <p>Galeria danos Entrega</p>
+                    <div class="row d-flex">
 
-                @if (ViewBag.ficheirosEntrega == null)
-                {
-                    <p>Nehuma imagem inserida</p>
-                }
-                else
-                @foreach (var file in ViewBag.ficheirosEntrega)
-                {
-                    <div class="col p-2 m-2"
+                        @if (ViewBag.ficheirosEntrega == null)
+                        {
+                            <p>Nehuma imagem inserida</p>
+                        }
+                        else
+                            @foreach (var file in ViewBag.ficheirosEntrega)
+                            {
+                                <div class="col p-2 m-2"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
-                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                                </div>
+
+                            }
                     </div>
+                }if (estado.state.Equals(Estado.State.Recolha)) {
 
-                }
-            </div>
-
-                <div>
-                <dt class = "col-sm-2">
-                    Funcionario Recolha
-                </dt>
-                <dd class = "col-sm-10"> 
+                    <div>
+                    <dt class = "col-sm-2">
+                        Funcionario Recolha
+                    </dt>
+                    <dd class = "col-sm-10">   
+                       @ViewBag.funcionarioRecolha
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Km Finais
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.NrKilometros
+                    </dd>
+                    <dt class = "col-sm-2">
+                        Observações
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @estado.observacoes
+                    </dd>
+                    <dt class = "col-sm-2">   
+                        Danos
+                    </dt>
+                    <dd class = "col-sm-10">   
+                        @if(estado.danos == true){
+                            <label>Sim</label>
+                        }else{
+                            <label>Nao</label>
+                        }
+                    </dd>
                     
-                </dd>
-                <dt class = "col-sm-2">
-                    Km Finais
-                </dt>
-                <dd class = "col-sm-10">   
-
-                </dd>
-                <dt class = "col-sm-2">
-                    Observações
-                </dt>
-                <dd class = "col-sm-10">   
-                    
-                </dd>
-                <dt class = "col-sm-2">   
-                    Danos
-                </dt>
-                <dd class="col-sm-10">
-                    
-                </dd>
-                <dt class="col-sm-2">
-                    Preco
-                </dt>
-                <dd class="col-sm-10">
-                    
-                </dd>
                 </div>
-                <p>Galeria danos Recolha</p>
-            <div class="row d-flex">
+                    <p>Galeria danos Recolha</p>
+                    <div class="row d-flex">
 
-                @if (ViewBag.ficheirosRecolha == null)
-                {
-                    <p>Nehuma imagem inserida</p>
-                }
-                else
-                @foreach (var file in ViewBag.ficheirosRecolha)
-                {
-                    <div class="col p-2 m-2"
+                        @if (ViewBag.ficheirosRecolha == null)
+                        {
+                            <p>Nehuma imagem inserida</p>
+                        }
+                        else
+                            @foreach (var file in ViewBag.ficheirosRecolha)
+                            {
+                                <div class="col p-2 m-2"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
-                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
-                    </div>
+                                    <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
+                                </div>
 
+                            }
+                    </div>
                 }
-            </div>
+            }
         }
     </dl>
 </div>
