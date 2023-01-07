@@ -14,8 +14,10 @@
     <input type="date" name="df" value="@Model.df.ToString("yyyy-MM-dd")" required readonly
 		oninvalid="this.setCustomValidity('Por Favor insira uma data de fim')" 
 		oninput="setCustomValidity('')" />
-    <input type="submit" value="Reserva" />
-    @*Preco*@
+        <p></p>
+        <label>€</label><input type="text" name="preco" value="@Model.preco" readonly/>
+    <input type="submit" value="Reservar" />
+
 }<div>
     <a asp-action="Index">Back to List</a>
 </div>

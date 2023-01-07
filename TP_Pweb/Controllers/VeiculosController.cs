@@ -85,10 +85,24 @@ namespace TP_Pweb.Controllers
             }
             cri.Veiculoid = idcar;
             cri.di = di;
-            cri.df = df;    
-            
+            cri.df = df;
+            cri.preco = calcularPreco(di, df, veiculo.CustoDia);
             return View(cri);
         }
+        private int calcularPreco(DateTime di, DateTime df, int custodia)
+        {
+
+            int NrDias = 0;
+            int p = 0;
+
+            NrDias = (df - di).Days;
+
+
+            p = custodia * NrDias;
+
+            return p;
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

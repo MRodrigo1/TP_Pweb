@@ -152,7 +152,7 @@ namespace TP_Pweb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar,DateTime di, DateTime df) {
+        public async Task<IActionResult> CreateFromDetails([Bind("Id,state,DataRecolha,DataEntrega,UtilizadorId,VeiculoId")] Reserva reserva, int idcar,DateTime di, DateTime df,int preco) {
             //ViewData["AccomodationId"] = new SelectList(_context.Accomodations, "AccomodationId", "Description", booking.AccomodationId);
             //var customer = _context.Customers.Where(x => x.ApplicationUser.Id == applicationUserId).First();
 
@@ -169,7 +169,7 @@ namespace TP_Pweb.Controllers
             reserva.classificada = false;
             var veiculo = await _context.veiculos.Where(v => v.Id == idcar).FirstAsync();
 
-            reserva.preco = calcularPreco(reserva.DataEntrega, reserva.DataRecolha, veiculo.CustoDia);
+            reserva.preco = preco;
             // verifica se a data é válida
             //TODO Melhorar função IsValidDate(reserva)
 
@@ -218,18 +218,6 @@ namespace TP_Pweb.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private int calcularPreco(DateTime di, DateTime df, int custodia) {
-
-            int NrDias = 0;
-            int p = 0;
-
-            NrDias = (df - di).Days;
-
-
-            p = custodia * NrDias;
-
-            return p;
-        }
         private bool IsValidDate(Reserva booking) {
 
             var reservas = _context.reservas.Where(r => r.VeiculoId == booking.VeiculoId);
