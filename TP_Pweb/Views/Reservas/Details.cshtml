@@ -55,7 +55,7 @@
             foreach (var estado in Model.estados)
             {
                 if(estado.state.Equals(Estado.State.Entrega)){
-                <div>
+                
                     <dt class = "col-sm-2">
                         Funcionario Entrega
                     </dt>
@@ -85,9 +85,9 @@
                         }
                     </dd>
                     
-                </div>
+                
                 <p>Galeria danos Entrega</p>
-                <div class="row d-flex">
+                    <div class="row d-flex row-cols-md-auto">
 
                     @if (ViewBag.ficheirosEntrega == null)
                     {
@@ -96,7 +96,7 @@
                     else
                         @foreach (var file in ViewBag.ficheirosEntrega)
                         {
-                            <div class="col p-2 m-2"
+                                <div class="col p-1 m-1"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
                                 <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
@@ -112,7 +112,7 @@
             foreach (var estado in Model.estados)
             {
                 if (estado.state.Equals(Estado.State.Entrega)) {
-                    <div>
+                    
                     <dt class = "col-sm-2">
                         Funcionario Entrega
                     </dt>
@@ -141,9 +141,9 @@
                             <label>Nao</label>
                         }
                     </dd>
-                </div>
+               
                     <p>Galeria danos Entrega</p>
-                    <div class="row d-flex">
+                    <div class="d-flex row-cols-md-auto">
 
                         @if (ViewBag.ficheirosEntrega == null)
                         {
@@ -152,7 +152,7 @@
                         else
                             @foreach (var file in ViewBag.ficheirosEntrega)
                             {
-                                <div class="col p-2 m-2"
+                                <div class="col p-1 m-1"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
                                     <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />
@@ -162,7 +162,7 @@
                     </div>
                 }if (estado.state.Equals(Estado.State.Recolha)) {
 
-                    <div>
+                    
                     <dt class = "col-sm-2">
                         Funcionario Recolha
                     </dt>
@@ -192,9 +192,9 @@
                         }
                     </dd>
                     
-                </div>
+                
                     <p>Galeria danos Recolha</p>
-                    <div class="row d-flex">
+                    <div class="d-flex row-cols-md-auto">
 
                         @if (ViewBag.ficheirosRecolha == null)
                         {
@@ -203,7 +203,7 @@
                         else
                             @foreach (var file in ViewBag.ficheirosRecolha)
                             {
-                                <div class="col p-2 m-2"
+                                <div class="col p-1 m-1"
                     style="border-radius:10px; border:1px dotted #ccc;">
 
                                     <img src="@file" class="img-thumbnail" style="max-width:150px; max-height:150px;" />

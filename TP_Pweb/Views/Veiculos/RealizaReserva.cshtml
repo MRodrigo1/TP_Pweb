@@ -8,6 +8,7 @@
    @using (Html.BeginForm("CreateFromDetails", "Reservas", FormMethod.Post))
     {
     <input type="text" name="idcar" value="@Model.Veiculoid" hidden />
+    <input type="text" name="preco" value="@Model.preco" hidden />
     <p>Data de Entrega: <input type="date" name="di" value="@Model.di.ToString("yyyy-MM-dd")" required readonly 
 		oninvalid="this.setCustomValidity('Por Favor insira uma data de começo')" 
 		oninput="setCustomValidity('')" />  </p>
