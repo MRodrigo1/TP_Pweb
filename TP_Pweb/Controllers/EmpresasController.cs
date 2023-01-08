@@ -94,6 +94,7 @@ namespace TP_Pweb.Controllers
 
 
             var emp = await _context.Empresa.Where(e => e.Id == id).FirstAsync();
+            var carros = await _context.veiculos.ToListAsync();
 
             if (emp == null)
                 return NotFound();
@@ -111,6 +112,21 @@ namespace TP_Pweb.Controllers
                     else
                     {
                         user.ativo = false;
+                    }
+                }
+            }
+
+            foreach (var car in carros)
+            {
+                if (car.EmpresaId == emp.Id)
+                {
+                    if (emp.ativo == true)
+                    {
+                        car.ativo = true;
+                    }
+                    else
+                    {
+                        car.ativo = false;
                     }
                 }
             }
