@@ -36,6 +36,8 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+            @if (item.ativo == true)
+            {
         <tr>
             <td>
                  <div>
@@ -73,6 +75,7 @@
                     <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
             </td>
         </tr>
+        }
 }
     </tbody>
 </table>
