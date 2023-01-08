@@ -69,8 +69,16 @@
 									<li><a class="dropdown-item" asp-controller="Reservas" asp-action="AsMinhasReservas">As Minhas Reservas</a></li>
 								</ul>
 							</li>
+						}else{
+							<li class="nav-item dropdown">
+								<a class="nav-link text-light dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									Área de Veiculos
+								</a>
+								<ul class="dropdown-menu">
+									<li><a class="dropdown-item" asp-controller="Veiculos" asp-action="AllVeiculos">Todos os Veiculos</a></li>
+									</ul>
+							</li>
 						}
-
 					</ul>
 
 					<partial name="_LoginPartial" />

@@ -34,7 +34,7 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.preco)
         </dd>
-
+        <hr />
         @if (Model.state.Equals(Reserva.State.Cancelada))
         {
             foreach (var estado in Model.estados)
@@ -44,7 +44,7 @@
                         Funcionario Cancelamento
                     </dt>
                      <dd class = "col-sm-10">   
-                       @ViewBag.funcionarioEntrega
+                       @ViewBag.funcionarioCancelamento
                     </dd>
                </div>
             }
@@ -160,6 +160,7 @@
 
                             }
                     </div>
+                    <hr />
                 }if (estado.state.Equals(Estado.State.Recolha)) {
 
                     

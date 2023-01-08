@@ -134,6 +134,8 @@ namespace TP_Pweb.Controllers
 
             var categoria = await _context.categorias
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+
             if (categoria == null)
             {
                 return NotFound();
@@ -153,6 +155,13 @@ namespace TP_Pweb.Controllers
                 return Problem("Entity set 'ApplicationDbContext.categorias'  is null.");
             }
             var categoria = await _context.categorias.FindAsync(id);
+            var veiculos = await _context.veiculos.Where(v => v.CategoriaId == id).ToListAsync();
+
+            if (veiculos.Count > 0)
+            {
+                TempData["Error"] = "Categoria nao pode estar incluida em nenhum veiculo";
+                return RedirectToAction(nameof(Index));
+            }
             if (categoria != null)
             {
                 _context.categorias.Remove(categoria);

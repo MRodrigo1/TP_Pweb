@@ -61,7 +61,8 @@ namespace TP_Pweb.Controllers
             if (reserva != null && reserva.state.Equals(Reserva.State.Pendente))
             {
                 reserva.state = Reserva.State.Cancelada;
-                _context.Update(reserva);
+                _context.reservas.Remove(reserva);
+                TempData["Error"] = String.Format("Reserva cancelada.");
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(AsMinhasReservas));
@@ -155,7 +156,7 @@ namespace TP_Pweb.Controllers
             ViewBag.ficheirosRecolha = filesRecolha;
 
             //Nome dos funcionarios/Getores que aceiaram
-            if (reserva.state.Equals(Reserva.State.Entregue) || reserva.state.Equals(Reserva.State.Decorrer) || reserva.state.Equals(Reserva.State.Concluida) || reserva.state.Equals(Reserva.State.Cancelada)) {
+            if (reserva.state.Equals(Reserva.State.Entregue) || reserva.state.Equals(Reserva.State.Decorrer) || reserva.state.Equals(Reserva.State.Concluida)) {
             var fEntrega = await _context.estados.Where(e => e.ReservaId == id && e.state.Equals(Estado.State.Entrega)).FirstAsync();
             var funcionarioEntrega = await _context.Users.Where(u => u.Id == fEntrega.FuncionarioId).FirstAsync();
             if(funcionarioEntrega!=null)
@@ -170,7 +171,8 @@ namespace TP_Pweb.Controllers
             }
             if (reserva.state.Equals(Reserva.State.Cancelada)) {
                 var fcancelada = await _context.estados.Where(e => e.ReservaId == id && e.state.Equals(Estado.State.Entrega)).FirstAsync();
-                var funcionarioRecolha = await _context.Users.Where(u => u.Id == fcancelada.FuncionarioId).FirstAsync();
+                var funcionarioCancelamento = await _context.Users.Where(u => u.Id == fcancelada.FuncionarioId).FirstAsync();
+                ViewBag.funcionarioCancelamento = funcionarioCancelamento.PrimeiroNome + " " + funcionarioCancelamento.UltimoNome;
             }
             return View(reserva);
         }
@@ -424,7 +426,21 @@ namespace TP_Pweb.Controllers
                 TempData["Error"] = String.Format("Erro.");
                 return RedirectToAction(nameof(Index));
             }
-            if (reserva != null && veiculo != null && func != null)
+            var reservas = await _context.reservas.Where(r => r.VeiculoId == veiculo.Id && !r.state.Equals(Reserva.State.Pendente) && !r.state.Equals(Reserva.State.Cancelada) && !r.state.Equals(Reserva.State.Concluida)).ToListAsync();
+            bool Valida = true;
+            foreach (var r in reservas) {
+                if (reserva.DataEntrega < r.DataEntrega && reserva.DataRecolha < r.DataEntrega ||
+                             reserva.DataRecolha > r.DataRecolha && reserva.DataRecolha > r.DataRecolha)
+                {
+                }
+                else
+                {
+                    Valida = false;
+                }
+            }
+
+
+            if (reserva != null && veiculo != null && func != null && Valida)
             {
                 List<Estado> states = new List<Estado>();
                 states.Add(estado);
@@ -432,6 +448,9 @@ namespace TP_Pweb.Controllers
                 reserva.state = Reserva.State.Decorrer;
                 _context.Update(reserva);
                 await _context.SaveChangesAsync();
+            }
+            else {
+                TempData["Error"] = "Nao foi possivel confimar a reserva.[Conflito datas]";
             }
             return RedirectToAction(nameof(Index));
         }

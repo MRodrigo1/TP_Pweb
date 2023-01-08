@@ -117,7 +117,8 @@ namespace TP_Pweb.Controllers
 
 
             p = custodia * NrDias;
-
+            if (p == 0)
+                p = custodia;
             return p;
         }
 
@@ -185,7 +186,7 @@ namespace TP_Pweb.Controllers
                 }
                 if (FotoVeiculo != null)
                 {
-                    if (FotoVeiculo.Length <= (200 * 1024) && isValidFileType(FotoVeiculo.FileName))
+                    if (FotoVeiculo.Length <= (200 * 2000) && isValidFileType(FotoVeiculo.FileName))
                     {
                         using (var dataStream = new MemoryStream())
                         {
@@ -274,7 +275,7 @@ namespace TP_Pweb.Controllers
             ViewData["ficheiros"] = files;
 
             if (FotoVeiculo == null) {
-                ModelState.Remove(nameof(FotoVeiculo));//TODO VERIFICAR O TAMANHO DA IMAGEM
+                ModelState.Remove(nameof(FotoVeiculo));
             }
 
             ModelState.Remove(nameof(veiculo.empresa));
@@ -285,7 +286,8 @@ namespace TP_Pweb.Controllers
                 
                 if (FotoVeiculo != null)
                 {
-                    if (FotoVeiculo.Length <= (200 * 1024) && isValidFileType(FotoVeiculo.FileName))
+                    if (FotoVeiculo.Length <= (200 * 2000) &&
+                        isValidFileType(FotoVeiculo.FileName))
                     {
                         using (var dataStream = new MemoryStream())
                         {

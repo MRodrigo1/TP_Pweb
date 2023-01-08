@@ -6,21 +6,21 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
-            <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+            <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Olá @User.Identity?.Name!</a>
     </li>
     <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-light text-opacity-75">Logout <i class="bi bi-box-arrow-right"></i></button>
+                <button type="submit" class="nav-link btn btn-link text-light text-opacity-75">Sair <i class="bi bi-box-arrow-right"></i></button>
         </form>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Register">Registar</a>
     </li>
     <li class="nav-item">
-            <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Login">Login <i class="bi bi-box-arrow-in-left"></i></a>
+            <a class="nav-link text-light text-opacity-75" asp-area="Identity" asp-page="/Account/Login">Entrar <i class="bi bi-box-arrow-in-left"></i></a>
     </li>
 }
 </ul>

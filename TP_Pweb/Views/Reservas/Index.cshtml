@@ -6,9 +6,6 @@
 
 <h1>Index</h1>
 
-<p>
-    <a class="btn btn-warning" asp-action="Create">Criar Reserva</a>
-</p>
 <table class="table table-striped table-hover table-bordered mt-4">
     <thead>
         <tr>
@@ -20,6 +17,12 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Veiculo)
+            </th>
+             <th>
+                Data Entrega
+            </th>
+             <th>
+                Data Final
             </th>
             <th>Action</th>
         </tr>
@@ -35,6 +38,12 @@
             </td>
             <td>
                @Html.DisplayFor(modelItem => item.Veiculo.Modelo) [@Html.DisplayFor(modelItem => item.Veiculo.Id)]
+            </td>
+            <td>
+               @Html.DisplayFor(modelItem => item.DataEntrega) 
+            </td>
+            <td>
+               @Html.DisplayFor(modelItem => item.DataRecolha) 
             </td>
             <td>
                 @if(item.state.Equals(Reserva.State.Pendente)){
