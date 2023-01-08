@@ -11,7 +11,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Adicionar Veiculo</a>
+    <a class="btn btn-warning" asp-action="Create">Adicionar Veiculo</a>
 </p>
 <table data-toggle="table" data-search="true">
     <thead>
@@ -34,7 +34,7 @@
             <th data-sortable="true" data-searchable="true"><i class="bi bi-filter-left">
                 @Html.DisplayNameFor(model => model.categoria)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -73,10 +73,10 @@
                 @Html.DisplayFor(modelItem => item.categoria.Nome)
             </td>
             <td>
-                <a asp-action="AtivaDesativaVeiculos" asp-route-id="@item.Id">Ativar/Desativar</a> |
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar Veiculo</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Apagar Veiculo</a>
+                    <a class="btn btn-primary" asp-action="AtivaDesativaVeiculos" asp-route-id="@item.Id">Ativar/Desativar</a>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
+                    <a class="btn btn-primary" asp-action="Delete" asp-route-id="@item.Id">Apagar</a>
             </td>
         </tr>
 }

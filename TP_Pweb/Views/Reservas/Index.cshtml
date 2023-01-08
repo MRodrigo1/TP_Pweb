@@ -7,9 +7,9 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-warning" asp-action="Create">Criar Reserva</a>
 </p>
-<table class="table">
+<table class="table table-striped table-hover table-bordered mt-4">
     <thead>
         <tr>
             <th>
@@ -21,7 +21,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Veiculo)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -38,14 +38,14 @@
             </td>
             <td>
                 @if(item.state.Equals(Reserva.State.Pendente)){
-                <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Confirmar</a>
-                <a asp-action="CancelarReserva" asp-route-id="@item.Id">Rejeitar</a> 
+                        <a class="btn btn-primary" asp-action="ProcessaEstado" asp-route-id="@item.Id">Confirmar</a>
+                        <a class="btn btn-primary" asp-action="CancelarReserva" asp-route-id="@item.Id">Rejeitar</a>
                 }else if(item.state.Equals(Reserva.State.Entregue)){
-                <a asp-action="ProcessaEstado" asp-route-id="@item.Id">Encerrar</a>
+                        <a class="btn btn-primary" asp-action="ProcessaEstado" asp-route-id="@item.Id">Encerrar</a>
                 }else if (item.state.Equals(Reserva.State.Decorrer)){
                 <a> Waiting... |</a>
                 }
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">Detalhes</a>
             </td>
         </tr>
 }
