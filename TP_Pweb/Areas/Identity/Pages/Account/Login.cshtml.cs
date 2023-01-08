@@ -115,28 +115,33 @@ namespace TP_Pweb.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var user = _context.Users.Where(u => u.Email == Input.Email).FirstOrDefault();
-                var empresa = _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefault();
-                if (user != null)
-                {
-                    if (user.ativo == false)
-                    {
-                        _logger.LogWarning("Blocked Account.");
-                        return RedirectToPage("./Lockout");
-                    }
-                }
-
-                if (empresa != null) {
-                    if (empresa.ativo == false) {
-                        _logger.LogWarning("Blocked Account.");
-                        return RedirectToPage("./Lockout");
-                    }
-                }
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
-                        _logger.LogInformation("User logged in.");
-                        return LocalRedirect(returnUrl);
+                    var user = _context.Users.Where(u => u.Email == Input.Email).FirstOrDefault();
+                    var empresa = _context.Empresa.Where(e => e.Id == user.EmpresaId).FirstOrDefault();
+                    if (user != null)
+                    {
+                        if (user.ativo == false)
+                        {
+                            await _signInManager.SignOutAsync();
+                            _logger.LogWarning("Blocked Account.");
+                            return RedirectToPage("./Lockout");
+                        }
+                    }
+
+                    if (empresa != null)
+                    {
+                        if (empresa.ativo == false)
+                        {
+                            await _signInManager.SignOutAsync();
+                            _logger.LogWarning("Blocked Account.");
+                            return RedirectToPage("./Lockout");
+                        }
+                    }   
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
